@@ -2,6 +2,12 @@
   display: flex;
   justify-content: stretch;
   flex-grow: 1;
+  gap: 0.25rem;
+}
+
+.SplitView > * {
+  flex-grow: 1;
+  flex-basis: 1rem;
 }
 
 .SplitView.horizontal {

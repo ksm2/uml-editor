@@ -1,7 +1,13 @@
 .App {
   width: 100vw;
   height: 100vh;
-  display: flex;
+  overflow: hidden;
+  display: grid;
+  grid-gap: 0.25rem;
+  grid-template:
+    "menu menu" min-content
+    "xml canvas" 1fr
+    "css canvas" 1fr / 45% 55%;
   flex-flow: column nowrap;
   justify-content: stretch;
 }

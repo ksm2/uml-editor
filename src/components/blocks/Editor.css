@@ -1,0 +1,7 @@
+.CodeMirror {
+  height: 100%;
+}
+
+.cm-s-nord span.cm-tag {
+  color: var(--bs-yellow);
+}
