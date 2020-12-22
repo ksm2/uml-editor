@@ -1,0 +1,13 @@
+.SplitView {
+  display: flex;
+  justify-content: stretch;
+  flex-grow: 1;
+}
+
+.SplitView.horizontal {
+  flex-flow: row nowrap;
+}
+
+.SplitView.vertical {
+  flex-flow: column nowrap;
+}
