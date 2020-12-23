@@ -1,15 +1,28 @@
 import { useEffect, useRef } from "react";
+import { Diagram } from "../../model";
+import { CanvasRenderer } from "../../renderer";
 
-function Canvas() {
+interface Props {
+  diagram: Diagram;
+}
+
+function Canvas({ diagram }: Props) {
   const div = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    const renderer = new CanvasRenderer(canvas.current!);
+    renderer.renderDiagram(diagram);
+  });
+
+  useEffect(() => {
     function onResize() {
       const rect = div.current!.getBoundingClientRect();
-      console.log(rect);
       canvas.current!.width = Math.trunc(rect.width);
       canvas.current!.height = Math.trunc(rect.height);
+
+      const renderer = new CanvasRenderer(canvas.current!);
+      renderer.renderDiagram(diagram);
     }
 
     window.addEventListener("resize", onResize);
@@ -17,13 +30,13 @@ function Canvas() {
     return () => {
       window.removeEventListener("resize", onResize);
     };
-  }, []);
+  }, [diagram]);
 
   return (
     <div
       ref={div}
       className="Canvas"
-      style={{ backgroundColor: "#2e3440", gridArea: "canvas" }}
+      style={{ backgroundColor: "rgb(235 242 255 / 1)", gridArea: "canvas" }}
     >
       <canvas ref={canvas} />
     </div>
