@@ -40,6 +40,7 @@ class CanvasRenderer implements Renderer {
     this.ctx.rect(0, 0, classifier.width, classifier.height);
     this.ctx.fill();
     this.ctx.stroke();
+    this.ctx.clip();
 
     this.ctx.translate(PADDING, PADDING);
     this.width.unshift(classifier.width - 2 * PADDING);
@@ -65,12 +66,12 @@ class CanvasRenderer implements Renderer {
   }
 
   renderText(text: Text) {
-    this.drawText(text.text, "normal normal 1.25rem system-ui");
+    this.drawText(text.text, "normal normal 1.25rem system-ui", "left");
     this.ctx.translate(0, 20);
   }
 
   renderTitle(title: Title): void {
-    this.drawText(title.text, "normal bold 1.25rem system-ui");
+    this.drawText(title.text, "normal bold 1.25rem system-ui", "center");
     this.ctx.translate(0, 20);
   }
 
@@ -86,13 +87,14 @@ class CanvasRenderer implements Renderer {
     this.ctx.translate(0, 2 * PADDING);
   }
 
-  private drawText(text: string, font: string) {
+  private drawText(text: string, font: string, align: "left" | "center") {
     this.ctx.save();
     this.ctx.beginPath();
     this.ctx.font = font;
     this.ctx.fillStyle = "#212529";
     const metrics = this.ctx.measureText(text);
-    this.ctx.fillText(text, (this.width[0] - metrics.width) / 2, 17);
+    const x = align === "center" ? (this.width[0] - metrics.width) / 2 : 0;
+    this.ctx.fillText(text, x, metrics.fontBoundingBoxAscent - 3);
     this.ctx.restore();
   }
 }
