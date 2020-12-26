@@ -5,6 +5,7 @@ import {
   Renderer,
   Separator,
   Text,
+  Title,
 } from "../model";
 
 const PADDING = 10;
@@ -64,13 +65,12 @@ class CanvasRenderer implements Renderer {
   }
 
   renderText(text: Text) {
-    this.ctx.save();
-    this.ctx.beginPath();
-    this.ctx.font = "normal bold 1.25rem system-ui";
-    this.ctx.fillStyle = "#212529";
-    const metrics = this.ctx.measureText(text.text);
-    this.ctx.fillText(text.text, (this.width[0] - metrics.width) / 2, 17);
-    this.ctx.restore();
+    this.drawText(text.text, "normal normal 1.25rem system-ui");
+    this.ctx.translate(0, 20);
+  }
+
+  renderTitle(title: Title): void {
+    this.drawText(title.text, "normal bold 1.25rem system-ui");
     this.ctx.translate(0, 20);
   }
 
@@ -84,6 +84,16 @@ class CanvasRenderer implements Renderer {
     this.ctx.stroke();
     this.ctx.restore();
     this.ctx.translate(0, 2 * PADDING);
+  }
+
+  private drawText(text: string, font: string) {
+    this.ctx.save();
+    this.ctx.beginPath();
+    this.ctx.font = font;
+    this.ctx.fillStyle = "#212529";
+    const metrics = this.ctx.measureText(text);
+    this.ctx.fillText(text, (this.width[0] - metrics.width) / 2, 17);
+    this.ctx.restore();
   }
 }
 

@@ -6,7 +6,8 @@ import Relationship from "./Relationship";
 import type Renderer from "./Renderer";
 import Separator from "./Separator";
 import Text from "./Text";
+import Title from "./Title";
 
-export { Anchor, Classifier, Diagram, Relationship, Separator, Text };
+export { Anchor, Classifier, Diagram, Relationship, Separator, Text, Title };
 
 export type { Element, Renderer };
