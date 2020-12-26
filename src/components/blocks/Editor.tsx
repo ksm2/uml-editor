@@ -8,10 +8,11 @@ import "./Editor.css";
 
 interface Props {
   language: "css" | "xml";
-  children?: string;
+  value: string;
+  onChange?: (value: string) => void;
 }
 
-function Editor({ language, children }: Props) {
+function Editor({ language, value, onChange }: Props) {
   const ref = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -22,12 +23,16 @@ function Editor({ language, children }: Props) {
       theme: "nord",
     });
 
+    codeMirror.on("change", () => {
+      onChange?.(codeMirror.getValue());
+    });
+
     return () => {
       codeMirror.toTextArea();
     };
-  });
+  }, [language, onChange]);
 
-  return <textarea ref={ref}>{children}</textarea>;
+  return <textarea ref={ref} defaultValue={value} />;
 }
 
 export default Editor;

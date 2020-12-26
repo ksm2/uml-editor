@@ -3,7 +3,9 @@ import Editor from "../blocks/Editor";
 function CSSEditor() {
   return (
     <div className="CSSEditor" style={{ gridArea: "css" }}>
-      <Editor language="css">{`\
+      <Editor
+        language="css"
+        value={`\
 Interface {
   Title {
     font-style: italic;
@@ -15,7 +17,8 @@ Class {
     font-weight: bold;
   }
 }
-`}</Editor>
+`}
+      />
     </div>
   );
 }

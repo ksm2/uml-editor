@@ -1,34 +1,31 @@
-import {
-  Anchor,
-  Classifier,
-  Diagram,
-  Relationship,
-  Separator,
-  Text,
-  Title,
-} from "../model";
+import { useState } from "react";
+import { serializer } from "../serializer";
 import "./App.css";
 import { AppMenu, Canvas, CSSEditor, XMLEditor } from "./widgets";
 
 function App() {
-  const c1 = new Classifier(Anchor.S, 0, -50, 200, 120);
-  c1.addChild(new Title("Hello"));
-  c1.addChild(new Separator());
-  c1.addChild(new Text("Hello"));
-  c1.addChild(new Text("World"));
-  c1.addChild(new Separator());
-  const c2 = new Classifier(Anchor.N, 0, 50, 200, 100);
-  c2.addChild(new Title("Hello"));
-  const r1 = new Relationship(c2, Anchor.N, c1, Anchor.S);
-  const diagram = new Diagram();
-  diagram.addChild(c1);
-  diagram.addChild(c2);
-  diagram.addChild(r1);
+  const [xml, setXml] = useState(`\
+<?xml version="1.0" encoding="UTF-8" ?>
+<Diagram>
+  <Interface id="i1" anchor="s" x="0" y="-50">
+    <Title>Interface</Title>
+  </Interface>
+
+  <Class id="c1" anchor="n" x="0" y="50">
+    <Title>Class</Title>
+    <Separator/>
+    <Method>hello()</Method>
+  </Class>
+
+  <Implementation from="c1" to="i1" fromAnchor="n" toAnchor="s"/>
+</Diagram>
+`);
+  const diagram = serializer.deserialize(xml);
 
   return (
     <div className="App bg-secondary">
       <AppMenu />
-      <XMLEditor />
+      <XMLEditor xml={xml} onChange={setXml} />
       <CSSEditor />
       <Canvas diagram={diagram} />
     </div>
