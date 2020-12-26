@@ -3,24 +3,31 @@ import Classifier from "./Classifier";
 import AbstractElement from "./AbstractElement";
 import Anchor from "./Anchor";
 import Renderer from "./Renderer";
+import Tip from "./Tip";
 
 class Relationship extends AbstractElement {
   readonly from: Classifier;
   readonly fromAnchor: Anchor;
+  readonly fromTip: Tip;
   readonly to: Classifier;
   readonly toAnchor: Anchor;
+  readonly toTip: Tip;
 
   constructor(
     from: Classifier,
     fromAnchor: Anchor,
+    fromTip: Tip,
     to: Classifier,
-    toAnchor: Anchor
+    toAnchor: Anchor,
+    toTip: Tip
   ) {
     super();
     this.from = from;
     this.fromAnchor = fromAnchor;
+    this.fromTip = fromTip;
     this.to = to;
     this.toAnchor = toAnchor;
+    this.toTip = toTip;
   }
 
   getX1(): number {
@@ -37,6 +44,10 @@ class Relationship extends AbstractElement {
 
   getY2(): number {
     return this.to.getTop() + qcos(this.toAnchor) * this.to.height;
+  }
+
+  getAngle(): number {
+    return Math.atan2(this.getY2() - this.getY1(), this.getX2() - this.getX1());
   }
 
   render(renderer: Renderer): void {

@@ -7,7 +7,17 @@ import type Renderer from "./Renderer";
 import Separator from "./Separator";
 import Text from "./Text";
 import Title from "./Title";
+import Tip from "./Tip";
 
-export { Anchor, Classifier, Diagram, Relationship, Separator, Text, Title };
+export {
+  Anchor,
+  Classifier,
+  Diagram,
+  Relationship,
+  Separator,
+  Text,
+  Title,
+  Tip,
+};
 
 export type { Element, Renderer };

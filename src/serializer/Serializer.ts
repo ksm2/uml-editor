@@ -1,5 +1,4 @@
 import * as Model from "../model";
-import { Separator } from "../model";
 
 class Serializer {
   private readonly parser: DOMParser;
@@ -47,7 +46,7 @@ class Serializer {
       case "Text":
         return this.parseText(element);
       case "Separator":
-        return new Separator();
+        return new Model.Separator();
     }
 
     throw new Error(`Unknown tag: ${element.tagName}`);
@@ -73,9 +72,18 @@ class Serializer {
   private parseRelationship(element: Element): Model.Relationship {
     const from = this.parseClassifierAttribute(element, "from");
     const fromAnchor = this.parseAnchorAttribute(element, "fromAnchor");
+    const fromTip = this.parseTipAttribute(element, "fromTip");
     const to = this.parseClassifierAttribute(element, "to");
     const toAnchor = this.parseAnchorAttribute(element, "toAnchor");
-    return new Model.Relationship(from, fromAnchor, to, toAnchor);
+    const toTip = this.parseTipAttribute(element, "toTip");
+    return new Model.Relationship(
+      from,
+      fromAnchor,
+      fromTip,
+      to,
+      toAnchor,
+      toTip
+    );
   }
 
   private parseTitle(element: Element): Model.Title {
@@ -133,6 +141,18 @@ class Serializer {
     }
 
     return Model.Anchor.S;
+  }
+
+  private parseTipAttribute(element: Element, attribute: string): Model.Tip {
+    if (element.hasAttribute(attribute)) {
+      const value = element.getAttribute(attribute)!;
+      const item = Reflect.get(Model.Tip, value.toUpperCase());
+      if (item !== undefined) {
+        return item;
+      }
+    }
+
+    return Model.Tip.NONE;
   }
 
   private parseIntAttribute(

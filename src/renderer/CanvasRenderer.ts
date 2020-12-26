@@ -5,6 +5,7 @@ import {
   Renderer,
   Separator,
   Text,
+  Tip,
   Title,
 } from "../model";
 
@@ -61,8 +62,31 @@ class CanvasRenderer implements Renderer {
     this.ctx.lineTo(relationship.getX2(), relationship.getY2());
     this.ctx.lineWidth = 1.5;
     this.ctx.strokeStyle = "#212529";
+    this.ctx.fillStyle = "white";
     this.ctx.stroke();
+    this.drawFromTip(relationship);
+    this.drawToTip(relationship);
     this.ctx.restore();
+  }
+
+  private drawFromTip(relationship: Relationship): void {
+    if (relationship.fromTip !== Tip.NONE) {
+      this.ctx.save();
+      this.ctx.translate(relationship.getX1(), relationship.getY1());
+      this.ctx.rotate(relationship.getAngle() + Math.PI);
+      this.drawTip(relationship.fromTip);
+      this.ctx.restore();
+    }
+  }
+
+  private drawToTip(relationship: Relationship): void {
+    if (relationship.toTip !== Tip.NONE) {
+      this.ctx.save();
+      this.ctx.translate(relationship.getX2(), relationship.getY2());
+      this.ctx.rotate(relationship.getAngle());
+      this.drawTip(relationship.toTip);
+      this.ctx.restore();
+    }
   }
 
   renderText(text: Text) {
@@ -96,6 +120,74 @@ class CanvasRenderer implements Renderer {
     const x = align === "center" ? (this.width[0] - metrics.width) / 2 : 0;
     this.ctx.fillText(text, x, metrics.fontBoundingBoxAscent - 3);
     this.ctx.restore();
+  }
+
+  private drawTip(tip: Tip): void {
+    switch (tip) {
+      case Tip.ARROW:
+        this.drawArrow();
+        break;
+      case Tip.TRIANGLE:
+        this.drawTriangle();
+        break;
+      case Tip.FILLED_TRIANGLE:
+        this.ctx.fillStyle = this.ctx.strokeStyle;
+        this.drawTriangle();
+        break;
+      case Tip.DIAMOND:
+        this.drawDiamond();
+        break;
+      case Tip.FILLED_DIAMOND:
+        this.ctx.fillStyle = this.ctx.strokeStyle;
+        this.drawDiamond();
+        break;
+      case Tip.CIRCLE:
+        this.drawCircle();
+        break;
+      case Tip.FILLED_CIRCLE:
+        this.ctx.fillStyle = this.ctx.strokeStyle;
+        this.drawCircle();
+        break;
+    }
+  }
+
+  private drawArrow() {
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, 0);
+    this.ctx.lineTo(-20, 8);
+    this.ctx.moveTo(0, 0);
+    this.ctx.lineTo(-20, -8);
+    this.ctx.closePath();
+    this.ctx.stroke();
+  }
+
+  private drawTriangle(): void {
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, 0);
+    this.ctx.lineTo(-20, 10);
+    this.ctx.lineTo(-20, -10);
+    this.ctx.closePath();
+    this.ctx.fill();
+    this.ctx.stroke();
+  }
+
+  private drawDiamond(): void {
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, 0);
+    this.ctx.lineTo(-15, 8);
+    this.ctx.lineTo(-30, 0);
+    this.ctx.lineTo(-15, -8);
+    this.ctx.closePath();
+    this.ctx.fill();
+    this.ctx.stroke();
+  }
+
+  private drawCircle(): void {
+    this.ctx.beginPath();
+    this.ctx.ellipse(-10, 0, 10, 10, 0, 0, 260);
+    this.ctx.closePath();
+    this.ctx.fill();
+    this.ctx.stroke();
   }
 }
 

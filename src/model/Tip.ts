@@ -1,0 +1,12 @@
+enum Tip {
+  NONE,
+  ARROW,
+  TRIANGLE,
+  FILLED_TRIANGLE,
+  DIAMOND,
+  FILLED_DIAMOND,
+  CIRCLE,
+  FILLED_CIRCLE,
+}
+
+export default Tip;
