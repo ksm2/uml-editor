@@ -13,6 +13,8 @@ class UMLSerializer extends Serializer {
         return this.parseRelationship(UML.Association, element);
       case "Class":
         return this.parseClassifier(UML.Class, element);
+      case "Component":
+        return this.parseClassifier(UML.Component, element);
       case "Composition":
         return this.parseRelationship(UML.Composition, element);
       case "DataType":
@@ -33,6 +35,8 @@ class UMLSerializer extends Serializer {
         return this.parseClassifier(UML.Note, element);
       case "Object":
         return this.parseClassifier(UML.Object, element);
+      case "Package":
+        return this.parseClassifier(UML.Package, element);
       case "Primitive":
         return this.parseClassifier(UML.Primitive, element);
       default:

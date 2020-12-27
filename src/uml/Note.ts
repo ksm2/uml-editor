@@ -1,5 +1,7 @@
-import { Classifier } from "../model";
+import { Classifier, Shape } from "../model";
 
-class Note extends Classifier {}
+class Note extends Classifier {
+  shape: Shape = Shape.NOTE;
+}
 
 export default Note;

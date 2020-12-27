@@ -1,6 +1,10 @@
-import { Anchor, LinePattern, Tip } from "../../model";
+import { Anchor, LinePattern, Shape, Tip } from "../../model";
 
 const anchorSchema = Object.keys(Anchor)
+  .filter((it) => it.match(/^\D+$/))
+  .map((it) => it.toLowerCase());
+
+const shapeSchema = Object.keys(Shape)
   .filter((it) => it.match(/^\D+$/))
   .map((it) => it.toLowerCase());
 
@@ -20,6 +24,7 @@ const classifierSchema = {
     width: null,
     height: null,
     anchor: anchorSchema,
+    shape: shapeSchema,
   },
 };
 
@@ -36,11 +41,13 @@ const relationshipSchema = {
 const classifiers = {
   Class: classifierSchema,
   Classifier: classifierSchema,
+  Component: classifierSchema,
   DataType: classifierSchema,
   Enumeration: classifierSchema,
   Interface: classifierSchema,
   Note: classifierSchema,
   Object: classifierSchema,
+  Package: classifierSchema,
   Primitive: classifierSchema,
 };
 

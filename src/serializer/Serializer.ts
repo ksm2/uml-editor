@@ -68,6 +68,12 @@ class Serializer {
     const width = this.parseIntAttribute(element, "width", 200);
     const height = this.parseIntAttribute(element, "height", 120);
     const classifier = new constructor(anchor, x, y, width, height);
+    classifier.shape = this.parseEnumAttribute(
+      Model.Shape,
+      element,
+      "shape",
+      classifier.shape
+    );
     this.parseChildren(element, classifier);
     return classifier;
   }

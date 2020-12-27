@@ -5,6 +5,7 @@ import {
   Relationship,
   Renderer,
   Separator,
+  Shape,
   Text,
   Tip,
   Title,
@@ -39,7 +40,7 @@ class CanvasRenderer implements Renderer {
     this.ctx.lineWidth = 1.5;
     this.ctx.strokeStyle = "#212529";
     this.ctx.fillStyle = "white";
-    this.ctx.rect(0, 0, classifier.width, classifier.height);
+    this.drawShape(classifier);
     this.ctx.fill();
     this.ctx.stroke();
     this.ctx.clip();
@@ -54,6 +55,120 @@ class CanvasRenderer implements Renderer {
     this.height.shift();
 
     this.ctx.restore();
+  }
+
+  private drawShape(classifier: Classifier): void {
+    switch (classifier.shape) {
+      case Shape.RECTANGLE:
+        this.ctx.rect(0, 0, classifier.width, classifier.height);
+        return;
+      case Shape.ELLIPSE:
+        this.ctx.ellipse(
+          classifier.width / 2,
+          classifier.height / 2,
+          classifier.width / 2,
+          classifier.height / 2,
+          0,
+          0,
+          2 * Math.PI
+        );
+        return;
+      case Shape.FOLDER:
+        const FOLDER_WIDTH = 80;
+        const FOLDER_HEIGHT = 20;
+        this.ctx.rect(0, -FOLDER_HEIGHT, FOLDER_WIDTH, FOLDER_HEIGHT);
+        this.ctx.rect(0, 0, classifier.width, classifier.height);
+        return;
+      case Shape.NOTE:
+        const NOTE_SIZE = 30;
+        this.ctx.moveTo(0, 0);
+        this.ctx.lineTo(0, classifier.height);
+        this.ctx.lineTo(classifier.width - NOTE_SIZE, classifier.height);
+        this.ctx.lineTo(classifier.width, classifier.height - NOTE_SIZE);
+        this.ctx.lineTo(classifier.width, 0);
+        this.ctx.lineTo(0, 0);
+
+        this.ctx.moveTo(classifier.width - NOTE_SIZE, classifier.height);
+        this.ctx.lineTo(classifier.width, classifier.height - NOTE_SIZE);
+        this.ctx.lineTo(
+          classifier.width - NOTE_SIZE,
+          classifier.height - NOTE_SIZE
+        );
+        this.ctx.lineTo(classifier.width - NOTE_SIZE, classifier.height);
+        return;
+      case Shape.BOX:
+        const BOX_DEPTH = 20;
+        this.ctx.rect(0, 0, classifier.width, classifier.height);
+
+        this.ctx.moveTo(0, 0);
+        this.ctx.lineTo(classifier.width, 0);
+        this.ctx.lineTo(classifier.width + BOX_DEPTH, -BOX_DEPTH);
+        this.ctx.lineTo(BOX_DEPTH, -BOX_DEPTH);
+        this.ctx.lineTo(0, 0);
+
+        this.ctx.moveTo(classifier.width, 0);
+        this.ctx.lineTo(classifier.width, classifier.height);
+        this.ctx.lineTo(
+          classifier.width + BOX_DEPTH,
+          classifier.height - BOX_DEPTH
+        );
+        this.ctx.lineTo(classifier.width + BOX_DEPTH, -BOX_DEPTH);
+        this.ctx.lineTo(classifier.width, 0);
+
+        return;
+      case Shape.FILE:
+        const FILE_SIZE = 30;
+        this.ctx.moveTo(FILE_SIZE, 0);
+        this.ctx.lineTo(0, FILE_SIZE);
+        this.ctx.lineTo(0, classifier.height);
+        this.ctx.lineTo(classifier.width, classifier.height);
+        this.ctx.lineTo(classifier.width, 0);
+        this.ctx.lineTo(FILE_SIZE, 0);
+
+        this.ctx.moveTo(FILE_SIZE, 0);
+        this.ctx.lineTo(0, FILE_SIZE);
+        this.ctx.lineTo(FILE_SIZE, FILE_SIZE);
+        this.ctx.lineTo(FILE_SIZE, 0);
+        return;
+      case Shape.COMPONENT:
+        const COMPONENT_WIDTH = 40;
+        const COMPONENT_HEIGHT = 20;
+        const COMPONENT_Y = (classifier.height - COMPONENT_HEIGHT * 3) / 2;
+
+        this.ctx.moveTo(0, 0);
+        this.ctx.lineTo(0, COMPONENT_Y);
+        this.ctx.lineTo(COMPONENT_WIDTH / 2, COMPONENT_Y);
+        this.ctx.lineTo(COMPONENT_WIDTH / 2, COMPONENT_Y + COMPONENT_HEIGHT);
+        this.ctx.lineTo(0, COMPONENT_Y + COMPONENT_HEIGHT);
+        this.ctx.lineTo(0, COMPONENT_Y + COMPONENT_HEIGHT * 2);
+        this.ctx.lineTo(
+          COMPONENT_WIDTH / 2,
+          COMPONENT_Y + COMPONENT_HEIGHT * 2
+        );
+        this.ctx.lineTo(
+          COMPONENT_WIDTH / 2,
+          COMPONENT_Y + COMPONENT_HEIGHT * 3
+        );
+        this.ctx.lineTo(0, COMPONENT_Y + COMPONENT_HEIGHT * 3);
+        this.ctx.lineTo(0, classifier.height);
+        this.ctx.lineTo(classifier.width, classifier.height);
+        this.ctx.lineTo(classifier.width, 0);
+        this.ctx.lineTo(0, 0);
+
+        this.ctx.rect(
+          COMPONENT_WIDTH / -2,
+          COMPONENT_Y,
+          COMPONENT_WIDTH,
+          COMPONENT_HEIGHT
+        );
+        this.ctx.rect(
+          COMPONENT_WIDTH / -2,
+          COMPONENT_Y + 2 * COMPONENT_HEIGHT,
+          COMPONENT_WIDTH,
+          COMPONENT_HEIGHT
+        );
+        return;
+    }
   }
 
   renderRelationship(relationship: Relationship): void {
@@ -208,7 +323,7 @@ class CanvasRenderer implements Renderer {
 
   private drawCircle(): void {
     this.ctx.beginPath();
-    this.ctx.ellipse(-10, 0, 10, 10, 0, 0, 260);
+    this.ctx.ellipse(-10, 0, 10, 10, 0, 0, 2 * Math.PI);
     this.ctx.closePath();
     this.ctx.fill();
     this.ctx.stroke();

@@ -2,13 +2,15 @@ import { qcos, qsin } from "../renderer/anchors";
 import AbstractElement from "./AbstractElement";
 import Anchor from "./Anchor";
 import Renderer from "./Renderer";
+import Shape from "./Shape";
 
 class Classifier extends AbstractElement {
-  readonly anchor: Anchor;
-  readonly x: number;
-  readonly y: number;
-  readonly width: number;
-  readonly height: number;
+  anchor: Anchor;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  shape: Shape = Shape.RECTANGLE;
 
   constructor(
     anchor: Anchor,

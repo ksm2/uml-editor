@@ -6,6 +6,7 @@ import LinePattern from "./LinePattern";
 import Relationship from "./Relationship";
 import type Renderer from "./Renderer";
 import Separator from "./Separator";
+import Shape from "./Shape";
 import Text from "./Text";
 import Tip from "./Tip";
 import Title from "./Title";
@@ -17,6 +18,7 @@ export {
   LinePattern,
   Relationship,
   Separator,
+  Shape,
   Text,
   Title,
   Tip,
