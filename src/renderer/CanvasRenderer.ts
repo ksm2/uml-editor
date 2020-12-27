@@ -1,6 +1,7 @@
 import {
   Classifier,
   Diagram,
+  LinePattern,
   Relationship,
   Renderer,
   Separator,
@@ -60,18 +61,40 @@ class CanvasRenderer implements Renderer {
     this.ctx.beginPath();
     this.ctx.moveTo(relationship.getX1(), relationship.getY1());
     this.ctx.lineTo(relationship.getX2(), relationship.getY2());
-    this.ctx.lineWidth = 1.5;
-    this.ctx.strokeStyle = "#212529";
-    this.ctx.fillStyle = "white";
+    this.applyRelationshipStyle(relationship);
     this.ctx.stroke();
     this.drawFromTip(relationship);
     this.drawToTip(relationship);
     this.ctx.restore();
   }
 
+  private applyRelationshipStyle(relationship: Relationship): void {
+    this.ctx.lineWidth = 1.5;
+    this.ctx.strokeStyle = "#212529";
+    this.ctx.fillStyle = "white";
+    switch (relationship.linePattern) {
+      case LinePattern.SOLID:
+        this.ctx.setLineDash([]);
+        break;
+      case LinePattern.DOTS:
+        this.ctx.setLineDash([2, 2]);
+        break;
+      case LinePattern.SMALL_DASHES:
+        this.ctx.setLineDash([5, 5]);
+        break;
+      case LinePattern.LARGE_DASHES:
+        this.ctx.setLineDash([10, 10]);
+        break;
+      case LinePattern.TIGHT_DASHES:
+        this.ctx.setLineDash([15, 5]);
+        break;
+    }
+  }
+
   private drawFromTip(relationship: Relationship): void {
     if (relationship.fromTip !== Tip.NONE) {
       this.ctx.save();
+      this.ctx.setLineDash([]);
       this.ctx.translate(relationship.getX1(), relationship.getY1());
       this.ctx.rotate(relationship.getAngle() + Math.PI);
       this.drawTip(relationship.fromTip);
@@ -82,6 +105,7 @@ class CanvasRenderer implements Renderer {
   private drawToTip(relationship: Relationship): void {
     if (relationship.toTip !== Tip.NONE) {
       this.ctx.save();
+      this.ctx.setLineDash([]);
       this.ctx.translate(relationship.getX2(), relationship.getY2());
       this.ctx.rotate(relationship.getAngle());
       this.drawTip(relationship.toTip);

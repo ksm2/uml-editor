@@ -1,5 +1,9 @@
 import * as Model from "../model";
 
+interface Class<T> {
+  new (...args: any[]): T;
+}
+
 class Serializer {
   private readonly parser: DOMParser;
   private readonly elementMap = new Map<Element, Model.Element>();
@@ -28,18 +32,14 @@ class Serializer {
     return parsed;
   }
 
-  private doParseElement(element: Element): Model.Element {
+  protected doParseElement(element: Element): Model.Element {
     switch (element.tagName) {
       case "Diagram":
         return this.parseDiagram(element);
-      case "Class":
       case "Classifier":
-      case "Interface":
-        return this.parseClassifier(element);
-      case "Implementation":
-      case "Association":
+        return this.parseClassifier(Model.Classifier, element);
       case "Relationship":
-        return this.parseRelationship(element);
+        return this.parseRelationship(Model.Relationship, element);
       case "Title":
         return this.parseTitle(element);
       case "Method":
@@ -58,32 +58,45 @@ class Serializer {
     return diagram;
   }
 
-  private parseClassifier(element: Element): Model.Classifier {
+  protected parseClassifier<C extends Model.Classifier>(
+    constructor: Class<C>,
+    element: Element
+  ): C {
     const anchor = this.parseAnchorAttribute(element, "anchor");
     const x = this.parseIntAttribute(element, "x", 0);
     const y = this.parseIntAttribute(element, "y", 0);
     const width = this.parseIntAttribute(element, "width", 200);
     const height = this.parseIntAttribute(element, "height", 120);
-    const classifier = new Model.Classifier(anchor, x, y, width, height);
+    const classifier = new constructor(anchor, x, y, width, height);
     this.parseChildren(element, classifier);
     return classifier;
   }
 
-  private parseRelationship(element: Element): Model.Relationship {
+  protected parseRelationship<R extends Model.Relationship>(
+    constructor: Class<R>,
+    element: Element
+  ): R {
     const from = this.parseClassifierAttribute(element, "from");
     const fromAnchor = this.parseAnchorAttribute(element, "fromAnchor");
-    const fromTip = this.parseTipAttribute(element, "fromTip");
     const to = this.parseClassifierAttribute(element, "to");
     const toAnchor = this.parseAnchorAttribute(element, "toAnchor");
-    const toTip = this.parseTipAttribute(element, "toTip");
-    return new Model.Relationship(
-      from,
-      fromAnchor,
-      fromTip,
-      to,
-      toAnchor,
-      toTip
+    const relationship = new constructor(from, fromAnchor, to, toAnchor);
+    relationship.fromTip = this.parseTipAttribute(
+      element,
+      "fromTip",
+      relationship.fromTip
     );
+    relationship.toTip = this.parseTipAttribute(
+      element,
+      "toTip",
+      relationship.toTip
+    );
+    relationship.linePattern = this.parseLinePatternAttribute(
+      element,
+      "linePattern",
+      relationship.linePattern
+    );
+    return relationship;
   }
 
   private parseTitle(element: Element): Model.Title {
@@ -132,27 +145,50 @@ class Serializer {
     element: Element,
     attribute: string
   ): Model.Anchor {
-    if (element.hasAttribute(attribute)) {
-      const value = element.getAttribute(attribute)!;
-      const item = Reflect.get(Model.Anchor, value.toUpperCase());
-      if (item !== undefined) {
-        return item;
-      }
-    }
-
-    return Model.Anchor.S;
+    return this.parseEnumAttribute(
+      Model.Anchor,
+      element,
+      attribute,
+      Model.Anchor.S
+    );
   }
 
-  private parseTipAttribute(element: Element, attribute: string): Model.Tip {
+  private parseTipAttribute(
+    element: Element,
+    attribute: string,
+    fallback: Model.Tip
+  ): Model.Tip {
+    return this.parseEnumAttribute(Model.Tip, element, attribute, fallback);
+  }
+
+  private parseLinePatternAttribute(
+    element: Element,
+    attribute: string,
+    fallback: Model.LinePattern
+  ): Model.LinePattern {
+    return this.parseEnumAttribute(
+      Model.LinePattern,
+      element,
+      attribute,
+      fallback
+    );
+  }
+
+  private parseEnumAttribute<E>(
+    enumClass: Record<string, unknown>,
+    element: Element,
+    attribute: string,
+    fallback: E
+  ): E {
     if (element.hasAttribute(attribute)) {
       const value = element.getAttribute(attribute)!;
-      const item = Reflect.get(Model.Tip, value.toUpperCase());
+      const item = Reflect.get(enumClass, value.toUpperCase());
       if (item !== undefined) {
         return item;
       }
     }
 
-    return Model.Tip.NONE;
+    return fallback;
   }
 
   private parseIntAttribute(

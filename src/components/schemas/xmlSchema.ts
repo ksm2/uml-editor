@@ -1,6 +1,14 @@
-import { Anchor } from "../../model";
+import { Anchor, LinePattern, Tip } from "../../model";
 
 const anchorSchema = Object.keys(Anchor)
+  .filter((it) => it.match(/^\D+$/))
+  .map((it) => it.toLowerCase());
+
+const tipSchema = Object.keys(Tip)
+  .filter((it) => it.match(/^\D+$/))
+  .map((it) => it.toLowerCase());
+
+const linePatternSchema = Object.keys(LinePattern)
   .filter((it) => it.match(/^\D+$/))
   .map((it) => it.toLowerCase());
 
@@ -15,6 +23,39 @@ const classifierSchema = {
   },
 };
 
+const relationshipSchema = {
+  attrs: {
+    from: null,
+    fromTip: tipSchema,
+    to: null,
+    toTip: tipSchema,
+    linePattern: linePatternSchema,
+  },
+};
+
+const classifiers = {
+  Class: classifierSchema,
+  Classifier: classifierSchema,
+  DataType: classifierSchema,
+  Enumeration: classifierSchema,
+  Interface: classifierSchema,
+  Note: classifierSchema,
+  Object: classifierSchema,
+  Primitive: classifierSchema,
+};
+
+const relationships = {
+  Aggregation: relationshipSchema,
+  Anchor: relationshipSchema,
+  Association: relationshipSchema,
+  Composition: relationshipSchema,
+  Dependency: relationshipSchema,
+  DirectedAssociation: relationshipSchema,
+  Generalization: relationshipSchema,
+  Implementation: relationshipSchema,
+  Relationship: relationshipSchema,
+};
+
 const schema = {
   "!top": ["Diagram"],
   "!attrs": {
@@ -22,11 +63,10 @@ const schema = {
     class: null,
   },
   Diagram: {
-    children: ["Class", "Interface", "Implementation"],
+    children: [...Object.keys(classifiers), ...Object.keys(relationships)],
   },
-  Class: classifierSchema,
-  Classifier: classifierSchema,
-  Interface: classifierSchema,
+  ...classifiers,
+  ...relationships,
 };
 
 export default schema;

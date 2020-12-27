@@ -1,3 +1,3 @@
-import Serializer from "./Serializer";
+import UMLSerializer from "./UMLSerializer";
 
-export const serializer = new Serializer();
+export const serializer = new UMLSerializer();

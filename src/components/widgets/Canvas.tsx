@@ -36,7 +36,7 @@ function Canvas({ diagram }: Props) {
     <div
       ref={div}
       className="Canvas"
-      style={{ backgroundColor: "rgb(235 242 255 / 1)", gridArea: "canvas" }}
+      style={{ backgroundColor: "hsl(220 9% 92% / 1)", gridArea: "canvas" }}
     >
       <canvas ref={canvas} />
     </div>

@@ -17,7 +17,7 @@ function App() {
     <Method>hello()</Method>
   </Class>
 
-  <Implementation from="c1" to="i1" fromAnchor="n" toAnchor="s" fromTip="filled_diamond" toTip="triangle"/>
+  <Implementation from="c1" to="i1" fromAnchor="n" toAnchor="s"/>
 </Diagram>
 `);
   const diagram = serializer.deserialize(xml);

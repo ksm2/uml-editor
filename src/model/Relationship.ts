@@ -1,33 +1,31 @@
 import { qcos, qsin } from "../renderer/anchors";
-import Classifier from "./Classifier";
 import AbstractElement from "./AbstractElement";
 import Anchor from "./Anchor";
+import Classifier from "./Classifier";
+import LinePattern from "./LinePattern";
 import Renderer from "./Renderer";
 import Tip from "./Tip";
 
 class Relationship extends AbstractElement {
-  readonly from: Classifier;
-  readonly fromAnchor: Anchor;
-  readonly fromTip: Tip;
-  readonly to: Classifier;
-  readonly toAnchor: Anchor;
-  readonly toTip: Tip;
+  from: Classifier;
+  fromAnchor: Anchor;
+  fromTip: Tip = Tip.NONE;
+  to: Classifier;
+  toAnchor: Anchor;
+  toTip: Tip = Tip.NONE;
+  linePattern: LinePattern = LinePattern.SOLID;
 
   constructor(
     from: Classifier,
     fromAnchor: Anchor,
-    fromTip: Tip,
     to: Classifier,
-    toAnchor: Anchor,
-    toTip: Tip
+    toAnchor: Anchor
   ) {
     super();
     this.from = from;
     this.fromAnchor = fromAnchor;
-    this.fromTip = fromTip;
     this.to = to;
     this.toAnchor = toAnchor;
-    this.toTip = toTip;
   }
 
   getX1(): number {
