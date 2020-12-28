@@ -38,11 +38,10 @@ class CanvasRenderer implements Renderer {
 
   renderClassifier(classifier: Classifier): void {
     this.ctx.save();
-    this.ctx.beginPath();
     this.ctx.translate(classifier.getLeft(), classifier.getTop());
     this.ctx.lineWidth = 1.5;
     this.ctx.strokeStyle = "#212529";
-    this.ctx.fillStyle = "white";
+    this.ctx.fillStyle = classifier.isHovered() ? "#ffe083" : "white";
     this.drawShape(classifier);
     this.ctx.fill();
     this.ctx.stroke();
@@ -62,7 +61,18 @@ class CanvasRenderer implements Renderer {
     this.ctx.restore();
   }
 
+  isPointInClassifier(classifier: Classifier, x: number, y: number): boolean {
+    this.ctx.save();
+    this.ctx.translate(classifier.getLeft(), classifier.getTop());
+    this.drawShape(classifier);
+    const result = this.ctx.isPointInPath(x, y);
+    this.ctx.restore();
+
+    return result;
+  }
+
   private drawShape(classifier: Classifier): void {
+    this.ctx.beginPath();
     switch (classifier.shape) {
       case Shape.RECTANGLE:
         this.ctx.rect(0, 0, classifier.width, classifier.height);
@@ -91,7 +101,7 @@ class CanvasRenderer implements Renderer {
         this.ctx.lineTo(classifier.width - NOTE_SIZE, classifier.height);
         this.ctx.lineTo(classifier.width, classifier.height - NOTE_SIZE);
         this.ctx.lineTo(classifier.width, 0);
-        this.ctx.lineTo(0, 0);
+        this.ctx.closePath();
 
         this.ctx.moveTo(classifier.width - NOTE_SIZE, classifier.height);
         this.ctx.lineTo(classifier.width, classifier.height - NOTE_SIZE);
@@ -99,7 +109,7 @@ class CanvasRenderer implements Renderer {
           classifier.width - NOTE_SIZE,
           classifier.height - NOTE_SIZE
         );
-        this.ctx.lineTo(classifier.width - NOTE_SIZE, classifier.height);
+        this.ctx.closePath();
         return;
       case Shape.BOX:
         const BOX_DEPTH = 20;
@@ -109,7 +119,7 @@ class CanvasRenderer implements Renderer {
         this.ctx.lineTo(classifier.width, 0);
         this.ctx.lineTo(classifier.width + BOX_DEPTH, -BOX_DEPTH);
         this.ctx.lineTo(BOX_DEPTH, -BOX_DEPTH);
-        this.ctx.lineTo(0, 0);
+        this.ctx.closePath();
 
         this.ctx.moveTo(classifier.width, 0);
         this.ctx.lineTo(classifier.width, classifier.height);
@@ -118,7 +128,7 @@ class CanvasRenderer implements Renderer {
           classifier.height - BOX_DEPTH
         );
         this.ctx.lineTo(classifier.width + BOX_DEPTH, -BOX_DEPTH);
-        this.ctx.lineTo(classifier.width, 0);
+        this.ctx.closePath();
 
         return;
       case Shape.FILE:
@@ -128,12 +138,12 @@ class CanvasRenderer implements Renderer {
         this.ctx.lineTo(0, classifier.height);
         this.ctx.lineTo(classifier.width, classifier.height);
         this.ctx.lineTo(classifier.width, 0);
-        this.ctx.lineTo(FILE_SIZE, 0);
+        this.ctx.closePath();
 
         this.ctx.moveTo(FILE_SIZE, 0);
         this.ctx.lineTo(0, FILE_SIZE);
         this.ctx.lineTo(FILE_SIZE, FILE_SIZE);
-        this.ctx.lineTo(FILE_SIZE, 0);
+        this.ctx.closePath();
         return;
       case Shape.COMPONENT:
         const COMPONENT_WIDTH = 40;
@@ -158,7 +168,7 @@ class CanvasRenderer implements Renderer {
         this.ctx.lineTo(0, classifier.height);
         this.ctx.lineTo(classifier.width, classifier.height);
         this.ctx.lineTo(classifier.width, 0);
-        this.ctx.lineTo(0, 0);
+        this.ctx.closePath();
 
         this.ctx.rect(
           COMPONENT_WIDTH / -2,

@@ -5,6 +5,8 @@ interface Element {
   addChild(child: Element): this;
   deleteChild(child: Element): boolean;
   getChildren(): readonly Element[];
+  isHovered(): boolean;
+  setHovered(hovered: boolean): void;
 }
 
 export default Element;

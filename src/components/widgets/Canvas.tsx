@@ -1,9 +1,19 @@
-import { useEffect, useRef } from "react";
-import { Diagram } from "../../model";
+import { useEffect, useRef, MouseEvent } from "react";
+import { Classifier, Diagram, Element } from "../../model";
 import { CanvasRenderer } from "../../renderer";
 
 interface Props {
   diagram: Diagram;
+}
+
+function forAllNodes(
+  root: Element,
+  callback: (element: Element) => void
+): void {
+  for (const child of root.getChildren()) {
+    callback(child);
+    forAllNodes(child, callback);
+  }
 }
 
 function Canvas({ diagram }: Props) {
@@ -13,7 +23,7 @@ function Canvas({ diagram }: Props) {
   useEffect(() => {
     const renderer = new CanvasRenderer(canvas.current!);
     renderer.renderDiagram(diagram);
-  });
+  }, [diagram]);
 
   useEffect(() => {
     function onResize() {
@@ -32,13 +42,34 @@ function Canvas({ diagram }: Props) {
     };
   }, [diagram]);
 
+  function handleMouseMove(event: MouseEvent<HTMLCanvasElement>) {
+    const renderer = new CanvasRenderer(canvas.current!);
+    const { clientX, clientY } = event;
+    const boundingClientRect = event.currentTarget.getBoundingClientRect();
+
+    const x = clientX - boundingClientRect.x - boundingClientRect.width / 2;
+    const y = clientY - boundingClientRect.y - boundingClientRect.height / 2;
+
+    forAllNodes(diagram, (classifier) => {
+      if (classifier instanceof Classifier) {
+        const isInClassifier = renderer.isPointInClassifier(classifier, x, y);
+        classifier.setHovered(isInClassifier);
+      }
+    });
+
+    renderer.renderDiagram(diagram);
+  }
+
   return (
     <div
       ref={div}
       className="Canvas"
-      style={{ backgroundColor: "hsl(220 9% 92% / 1)", gridArea: "canvas" }}
+      style={{
+        backgroundColor: "hsl(220 9% 92% / 1)",
+        gridArea: "canvas",
+      }}
     >
-      <canvas ref={canvas} />
+      <canvas ref={canvas} onMouseMove={handleMouseMove} />
     </div>
   );
 }

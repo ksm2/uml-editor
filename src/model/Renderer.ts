@@ -14,6 +14,7 @@ interface Renderer {
   renderTitle(title: Title): void;
   renderSeparator(separator: Separator): void;
   renderStereotype(stereotype: Stereotype): void;
+  isPointInClassifier(classifier: Classifier, x: number, y: number): boolean;
 }
 
 export default Renderer;

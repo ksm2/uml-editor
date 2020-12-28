@@ -3,6 +3,7 @@ import Renderer from "./Renderer";
 
 abstract class AbstractElement implements Element {
   private readonly children = new Set<Element>();
+  private hovered = false;
 
   abstract render(renderer: Renderer): void;
 
@@ -17,6 +18,14 @@ abstract class AbstractElement implements Element {
 
   deleteChild(child: Element): boolean {
     return this.children.delete(child);
+  }
+
+  isHovered(): boolean {
+    return this.hovered;
+  }
+
+  setHovered(hovered: boolean): void {
+    this.hovered = hovered;
   }
 }
 
