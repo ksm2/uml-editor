@@ -3,6 +3,8 @@ import { useEffect, useRef } from "react";
 import "codemirror/lib/codemirror.css";
 import "codemirror/addon/hint/show-hint";
 import "codemirror/addon/hint/xml-hint";
+import "codemirror/addon/comment/comment";
+import "codemirror/addon/edit/matchtags";
 import "codemirror/mode/xml/xml";
 import "codemirror/mode/css/css";
 import "codemirror/theme/nord.css";
@@ -55,12 +57,15 @@ function Editor({ language, value, schema, onChange }: Props) {
       mode,
       lineNumbers: true,
       theme: "nord",
+      matchTags: true,
+      autocorrect: true,
       extraKeys: {
         "'<'": completeAfter,
         "'/'": completeIfAfterLt,
         "' '": completeIfInTag,
         "'='": completeIfInTag,
         "Ctrl-Space": "autocomplete",
+        "Ctrl-/": "toggleComment",
       },
       hintOptions,
     });

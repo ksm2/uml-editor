@@ -6,6 +6,7 @@ import {
   Renderer,
   Separator,
   Shape,
+  Stereotype,
   Text,
   Tip,
   Title,
@@ -16,11 +17,13 @@ const PADDING = 10;
 class CanvasRenderer implements Renderer {
   private readonly width: number[];
   private readonly height: number[];
+  private readonly context: string[];
   private readonly ctx: CanvasRenderingContext2D;
 
   constructor(canvas: HTMLCanvasElement) {
     this.width = [canvas.width];
     this.height = [canvas.height];
+    this.context = ["Canvas"];
     this.ctx = canvas.getContext("2d")!;
   }
 
@@ -48,11 +51,13 @@ class CanvasRenderer implements Renderer {
     this.ctx.translate(PADDING, PADDING);
     this.width.unshift(classifier.width - 2 * PADDING);
     this.height.unshift(classifier.height - 2 * PADDING);
+    this.context.unshift(Object.getPrototypeOf(classifier).constructor.name);
     for (const child of classifier.getChildren()) {
       child.render(this);
     }
     this.width.shift();
     this.height.shift();
+    this.context.shift();
 
     this.ctx.restore();
   }
@@ -248,6 +253,15 @@ class CanvasRenderer implements Renderer {
     this.ctx.stroke();
     this.ctx.restore();
     this.ctx.translate(0, 2 * PADDING);
+  }
+
+  renderStereotype(stereotype: Stereotype): void {
+    this.drawText(
+      `«${this.context[0]}»`,
+      "normal normal 1rem system-ui",
+      "center"
+    );
+    this.ctx.translate(0, 20);
   }
 
   private drawText(text: string, font: string, align: "left" | "center") {

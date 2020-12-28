@@ -17,7 +17,7 @@ const linePatternSchema = Object.keys(LinePattern)
   .map((it) => it.toLowerCase());
 
 const classifierSchema = {
-  children: ["Title", "Separator", "Method"],
+  children: ["Title", "Separator", "Method", "Stereotype"],
   attrs: {
     x: null,
     y: null,

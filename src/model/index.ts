@@ -7,6 +7,7 @@ import Relationship from "./Relationship";
 import type Renderer from "./Renderer";
 import Separator from "./Separator";
 import Shape from "./Shape";
+import Stereotype from "./Stereotype";
 import Text from "./Text";
 import Tip from "./Tip";
 import Title from "./Title";
@@ -19,6 +20,7 @@ export {
   Relationship,
   Separator,
   Shape,
+  Stereotype,
   Text,
   Title,
   Tip,

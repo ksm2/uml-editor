@@ -8,13 +8,15 @@ function App() {
 <?xml version="1.0" encoding="UTF-8" ?>
 <Diagram>
   <Interface id="i1" anchor="s" x="0" y="-50">
-    <Title>Interface</Title>
+    <Stereotype/>
+    <Title>Visitor</Title>
   </Interface>
 
-  <Class id="c1" anchor="n" x="0" y="50">
-    <Title>Class</Title>
+  <Class id="c1" anchor="n" x="0" y="50" width="400">
+    <Stereotype/>
+    <Title>Concrete Visitor</Title>
     <Separator/>
-    <Method>hello()</Method>
+    <Method>visitSomething(something: Something)</Method>
   </Class>
 
   <Implementation from="c1" to="i1" fromAnchor="n" toAnchor="s"/>

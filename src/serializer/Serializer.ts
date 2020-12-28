@@ -47,6 +47,8 @@ class Serializer {
         return this.parseText(element);
       case "Separator":
         return new Model.Separator();
+      case "Stereotype":
+        return new Model.Stereotype();
     }
 
     throw new Error(`Unknown tag: ${element.tagName}`);
