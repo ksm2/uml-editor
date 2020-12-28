@@ -1,9 +1,10 @@
 import { MouseEvent, MutableRefObject, useEffect, useRef } from "react";
-import { Classifier, Diagram } from "../../model";
+import { Classifier, Diagram, Element } from "../../model";
 import { CanvasRenderer } from "../../renderer";
 
 interface Props {
   diagram: Diagram;
+  onChange?: (element: Element) => void;
 }
 
 interface Coordinates {
@@ -11,7 +12,7 @@ interface Coordinates {
   readonly y: number;
 }
 
-function Canvas({ diagram }: Props) {
+function Canvas({ diagram, onChange }: Props) {
   const div = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const mouseDownCoords = useRef<Coordinates>(
@@ -81,6 +82,7 @@ function Canvas({ diagram }: Props) {
         );
         selectedElement.x = mouseDownPosition.current!.x + deltaX;
         selectedElement.y = mouseDownPosition.current!.y + deltaY;
+        onChange?.(selectedElement);
       }
     }
 

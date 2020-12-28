@@ -1,5 +1,5 @@
 import CodeMirror from "codemirror";
-import { useEffect, useRef } from "react";
+import { MutableRefObject, useEffect, useRef } from "react";
 import "codemirror/lib/codemirror.css";
 import "codemirror/addon/hint/show-hint";
 import "codemirror/addon/hint/xml-hint";
@@ -48,7 +48,15 @@ function completeIfInTag(cm: CodeMirror.Editor) {
 }
 
 function Editor({ language, value, schema, onChange }: Props) {
+  const onChangeRef = useRef(onChange);
   const ref = useRef<HTMLTextAreaElement>(null);
+  const editor = useRef<CodeMirror.Editor>(
+    null
+  ) as MutableRefObject<CodeMirror.Editor>;
+
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
 
   useEffect(() => {
     const mode = language === "xml" ? "xml" : "text/x-scss";
@@ -69,15 +77,28 @@ function Editor({ language, value, schema, onChange }: Props) {
       },
       hintOptions,
     });
-
-    codeMirror.on("change", () => {
-      onChange?.(codeMirror.getValue());
-    });
+    editor.current = codeMirror;
 
     return () => {
       codeMirror.toTextArea();
     };
-  }, [language, schema, onChange]);
+  }, [language, schema]);
+
+  useEffect(() => {
+    editor.current!.setValue(value);
+
+    function handleChange() {
+      const newValue = editor.current!.getValue();
+      if (newValue !== value) {
+        onChangeRef.current?.(newValue);
+      }
+    }
+
+    editor.current!.on("change", handleChange);
+    return () => {
+      editor.current!.off("change", handleChange);
+    };
+  }, [value]);
 
   return <textarea ref={ref} defaultValue={value} />;
 }

@@ -1,11 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Diagram, Element } from "../model";
 import { serializer } from "../serializer";
 import "./App.css";
 import { AppMenu, Canvas, CSSEditor, XMLEditor } from "./widgets";
 
 function App() {
-  const [xml, setXml] = useState(`\
-<?xml version="1.0" encoding="UTF-8" ?>
+  const [diagram, setDiagram] = useState(() => new Diagram());
+  const [xml, setXml] = useState("");
+
+  function handleXmlChange(xml: string): void {
+    const diagram = serializer.deserialize(xml);
+    setDiagram(diagram);
+  }
+
+  function handleCanvasChange(element: Element): void {
+    serializer.updateElement(element);
+    const xml = serializer.serialize(diagram);
+    setXml(xml);
+  }
+
+  useEffect(() => {
+    const initialXml = `\
 <Diagram>
   <Interface id="i1" anchor="s" x="0" y="-50">
     <Stereotype/>
@@ -21,15 +36,18 @@ function App() {
 
   <Implementation from="c1" to="i1" fromAnchor="n" toAnchor="s"/>
 </Diagram>
-`);
-  const diagram = serializer.deserialize(xml);
+`;
+    const diagram = serializer.deserialize(initialXml);
+    setDiagram(diagram);
+    setXml(initialXml);
+  }, []);
 
   return (
     <div className="App bg-secondary">
       <AppMenu />
-      <XMLEditor xml={xml} onChange={setXml} />
+      <XMLEditor xml={xml} onChange={handleXmlChange} />
       <CSSEditor />
-      <Canvas diagram={diagram} />
+      <Canvas diagram={diagram} onChange={handleCanvasChange} />
     </div>
   );
 }

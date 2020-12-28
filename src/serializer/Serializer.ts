@@ -1,3 +1,4 @@
+import { Classifier } from "../model";
 import * as Model from "../model";
 
 interface Class<T> {
@@ -6,13 +7,16 @@ interface Class<T> {
 
 class Serializer {
   private readonly parser: DOMParser;
+  private readonly serializer: XMLSerializer;
   private readonly elementMap = new Map<Element, Model.Element>();
 
   constructor() {
     this.parser = new DOMParser();
+    this.serializer = new XMLSerializer();
   }
 
   deserialize(xml: string): Model.Diagram {
+    this.elementMap.clear();
     const document = this.parser.parseFromString(xml, "text/xml");
     const diagram = this.parseElement(document.documentElement);
     if (!(diagram instanceof Model.Diagram)) {
@@ -20,6 +24,25 @@ class Serializer {
     }
 
     return diagram;
+  }
+
+  serialize(diagram: Model.Diagram): string {
+    if (this.hasElement(diagram)) {
+      const root = this.getElement(diagram)!;
+      return this.serializer.serializeToString(root);
+    }
+
+    return "";
+  }
+
+  updateElement(element: Model.Element): void {
+    if (this.hasElement(element)) {
+      const xmlElement = this.getElement(element)!;
+      if (element instanceof Classifier) {
+        xmlElement.setAttribute("x", String(element.x));
+        xmlElement.setAttribute("y", String(element.y));
+      }
+    }
   }
 
   private parseElement(element: Element): Model.Element {
@@ -212,6 +235,24 @@ class Serializer {
     }
 
     return fallback;
+  }
+
+  private hasElement(element: Model.Element): boolean {
+    for (const value of this.elementMap.values()) {
+      if (value === element) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private getElement(element: Model.Element): Element | undefined {
+    for (const [xmlElement, el] of this.elementMap) {
+      if (el === element) {
+        return xmlElement;
+      }
+    }
+    return undefined;
   }
 }
 
