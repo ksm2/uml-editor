@@ -1,19 +1,9 @@
-import { useEffect, useRef, MouseEvent } from "react";
-import { Classifier, Diagram, Element } from "../../model";
+import { MouseEvent, MutableRefObject, useEffect, useRef } from "react";
+import { Classifier, Diagram } from "../../model";
 import { CanvasRenderer } from "../../renderer";
 
 interface Props {
   diagram: Diagram;
-}
-
-function forAllNodes(
-  root: Element,
-  callback: (element: Element) => void
-): void {
-  for (const child of root.getChildren()) {
-    callback(child);
-    forAllNodes(child, callback);
-  }
 }
 
 interface Coordinates {
@@ -24,6 +14,12 @@ interface Coordinates {
 function Canvas({ diagram }: Props) {
   const div = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
+  const mouseDownCoords = useRef<Coordinates>(
+    null
+  ) as MutableRefObject<Coordinates>;
+  const mouseDownPosition = useRef<Coordinates>(
+    null
+  ) as MutableRefObject<Coordinates>;
 
   useEffect(() => {
     const renderer = new CanvasRenderer(canvas.current!);
@@ -59,11 +55,36 @@ function Canvas({ diagram }: Props) {
     return { x, y };
   }
 
+  function subtractCoords(vec1: Coordinates, vec2: Coordinates): Coordinates {
+    const x = vec1.x - vec2.x;
+    const y = vec1.y - vec2.y;
+    return { x, y };
+  }
+
+  function roundCoordsBy(coord: Coordinates, by: number): Coordinates {
+    return {
+      x: Math.round(coord.x / by) * by,
+      y: Math.round(coord.y / by) * by,
+    };
+  }
+
   function handleMouseMove(event: MouseEvent<HTMLCanvasElement>) {
     const renderer = new CanvasRenderer(canvas.current!);
     const { x, y } = getMouseCoordinates(event);
 
-    forAllNodes(diagram, (classifier) => {
+    if (event.buttons & 1) {
+      const selectedElement = diagram.find((el) => el.isSelected());
+      if (selectedElement instanceof Classifier) {
+        const { x: deltaX, y: deltaY } = roundCoordsBy(
+          subtractCoords({ x, y }, mouseDownCoords.current!),
+          20
+        );
+        selectedElement.x = mouseDownPosition.current!.x + deltaX;
+        selectedElement.y = mouseDownPosition.current!.y + deltaY;
+      }
+    }
+
+    diagram.forEach((classifier) => {
       if (classifier instanceof Classifier) {
         const isInClassifier = renderer.isPointInClassifier(classifier, x, y);
         classifier.setHovered(isInClassifier);
@@ -77,12 +98,17 @@ function Canvas({ diagram }: Props) {
     const renderer = new CanvasRenderer(canvas.current!);
     const { x, y } = getMouseCoordinates(event);
 
-    forAllNodes(diagram, (classifier) => {
+    diagram.forEach((classifier) => {
       if (classifier instanceof Classifier) {
         const isInClassifier = renderer.isPointInClassifier(classifier, x, y);
         classifier.setSelected(isInClassifier);
+        if (isInClassifier) {
+          mouseDownPosition.current = { x: classifier.x, y: classifier.y };
+        }
       }
     });
+
+    mouseDownCoords.current = { x, y };
 
     renderer.renderDiagram(diagram);
   }
