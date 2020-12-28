@@ -1,15 +1,16 @@
 import { MouseEvent, MutableRefObject, useEffect, useRef } from "react";
 import { Classifier, Diagram, Element } from "../../model";
 import { CanvasRenderer } from "../../renderer";
+import {
+  Coordinates,
+  getMouseCoordinates,
+  roundCoordsBy,
+  subtractCoords,
+} from "../../utils";
 
 interface Props {
   diagram: Diagram;
   onChange?: (element: Element) => void;
-}
-
-interface Coordinates {
-  readonly x: number;
-  readonly y: number;
 }
 
 function Canvas({ diagram, onChange }: Props) {
@@ -43,31 +44,6 @@ function Canvas({ diagram, onChange }: Props) {
       window.removeEventListener("resize", onResize);
     };
   }, [diagram]);
-
-  function getMouseCoordinates(
-    event: MouseEvent<HTMLCanvasElement>
-  ): Coordinates {
-    const { clientX, clientY } = event;
-    const boundingClientRect = event.currentTarget.getBoundingClientRect();
-
-    const x = clientX - boundingClientRect.x - boundingClientRect.width / 2;
-    const y = clientY - boundingClientRect.y - boundingClientRect.height / 2;
-
-    return { x, y };
-  }
-
-  function subtractCoords(vec1: Coordinates, vec2: Coordinates): Coordinates {
-    const x = vec1.x - vec2.x;
-    const y = vec1.y - vec2.y;
-    return { x, y };
-  }
-
-  function roundCoordsBy(coord: Coordinates, by: number): Coordinates {
-    return {
-      x: Math.round(coord.x / by) * by,
-      y: Math.round(coord.y / by) * by,
-    };
-  }
 
   function handleMouseMove(event: MouseEvent<HTMLCanvasElement>) {
     const renderer = new CanvasRenderer(canvas.current!);
