@@ -4,6 +4,7 @@ import Renderer from "./Renderer";
 abstract class AbstractElement implements Element {
   private readonly children = new Set<Element>();
   private hovered = false;
+  private selected = false;
 
   abstract render(renderer: Renderer): void;
 
@@ -26,6 +27,14 @@ abstract class AbstractElement implements Element {
 
   setHovered(hovered: boolean): void {
     this.hovered = hovered;
+  }
+
+  isSelected(): boolean {
+    return this.selected;
+  }
+
+  setSelected(selected: boolean): void {
+    this.selected = selected;
   }
 }
 

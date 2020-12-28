@@ -7,6 +7,8 @@ interface Element {
   getChildren(): readonly Element[];
   isHovered(): boolean;
   setHovered(hovered: boolean): void;
+  isSelected(): boolean;
+  setSelected(selected: boolean): void;
 }
 
 export default Element;

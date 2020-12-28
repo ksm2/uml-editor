@@ -16,6 +16,11 @@ function forAllNodes(
   }
 }
 
+interface Coordinates {
+  readonly x: number;
+  readonly y: number;
+}
+
 function Canvas({ diagram }: Props) {
   const div = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -42,18 +47,40 @@ function Canvas({ diagram }: Props) {
     };
   }, [diagram]);
 
-  function handleMouseMove(event: MouseEvent<HTMLCanvasElement>) {
-    const renderer = new CanvasRenderer(canvas.current!);
+  function getMouseCoordinates(
+    event: MouseEvent<HTMLCanvasElement>
+  ): Coordinates {
     const { clientX, clientY } = event;
     const boundingClientRect = event.currentTarget.getBoundingClientRect();
 
     const x = clientX - boundingClientRect.x - boundingClientRect.width / 2;
     const y = clientY - boundingClientRect.y - boundingClientRect.height / 2;
 
+    return { x, y };
+  }
+
+  function handleMouseMove(event: MouseEvent<HTMLCanvasElement>) {
+    const renderer = new CanvasRenderer(canvas.current!);
+    const { x, y } = getMouseCoordinates(event);
+
     forAllNodes(diagram, (classifier) => {
       if (classifier instanceof Classifier) {
         const isInClassifier = renderer.isPointInClassifier(classifier, x, y);
         classifier.setHovered(isInClassifier);
+      }
+    });
+
+    renderer.renderDiagram(diagram);
+  }
+
+  function handleMouseDown(event: MouseEvent<HTMLCanvasElement>) {
+    const renderer = new CanvasRenderer(canvas.current!);
+    const { x, y } = getMouseCoordinates(event);
+
+    forAllNodes(diagram, (classifier) => {
+      if (classifier instanceof Classifier) {
+        const isInClassifier = renderer.isPointInClassifier(classifier, x, y);
+        classifier.setSelected(isInClassifier);
       }
     });
 
@@ -69,7 +96,11 @@ function Canvas({ diagram }: Props) {
         gridArea: "canvas",
       }}
     >
-      <canvas ref={canvas} onMouseMove={handleMouseMove} />
+      <canvas
+        ref={canvas}
+        onMouseMove={handleMouseMove}
+        onMouseDown={handleMouseDown}
+      />
     </div>
   );
 }

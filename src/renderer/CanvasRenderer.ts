@@ -28,10 +28,16 @@ class CanvasRenderer implements Renderer {
   }
 
   renderDiagram(diagram: Diagram): void {
+    this.ctx.clearRect(0, 0, this.width[0], this.height[0]);
     this.ctx.save();
     this.ctx.translate(this.width[0] / 2, this.height[0] / 2);
     for (const child of diagram.getChildren()) {
       child.render(this);
+    }
+    for (const child of diagram.getChildren()) {
+      if (child instanceof Classifier && child.isSelected()) {
+        this.renderClassifierHandles(child);
+      }
     }
     this.ctx.restore();
   }
@@ -349,6 +355,33 @@ class CanvasRenderer implements Renderer {
     this.ctx.beginPath();
     this.ctx.ellipse(-10, 0, 10, 10, 0, 0, 2 * Math.PI);
     this.ctx.closePath();
+    this.ctx.fill();
+    this.ctx.stroke();
+  }
+
+  private renderClassifierHandles(classifier: Classifier): void {
+    this.ctx.save();
+    this.ctx.fillStyle = "white";
+    this.ctx.strokeStyle = "black";
+    this.ctx.lineWidth = 1;
+
+    for (const x of [
+      classifier.getLeft(),
+      classifier.getCenterX(),
+      classifier.getRight(),
+    ]) {
+      this.renderHandleAtPoint(x, classifier.getTop());
+      this.renderHandleAtPoint(x, classifier.getBottom());
+    }
+    this.renderHandleAtPoint(classifier.getLeft(), classifier.getCenterY());
+    this.renderHandleAtPoint(classifier.getRight(), classifier.getCenterY());
+
+    this.ctx.restore();
+  }
+
+  private renderHandleAtPoint(x: number, y: number): void {
+    this.ctx.beginPath();
+    this.ctx.rect(x - 4.5, y - 4.5, 9, 9);
     this.ctx.fill();
     this.ctx.stroke();
   }

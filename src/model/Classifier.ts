@@ -31,8 +31,24 @@ class Classifier extends AbstractElement {
     return this.x - this.width * qsin(this.anchor);
   }
 
+  getCenterX(): number {
+    return this.getLeft() + this.width / 2;
+  }
+
+  getRight(): number {
+    return this.getLeft() + this.width;
+  }
+
   getTop(): number {
     return this.y - this.height * qcos(this.anchor);
+  }
+
+  getCenterY(): number {
+    return this.getTop() + this.height / 2;
+  }
+
+  getBottom(): number {
+    return this.getTop() + this.height;
   }
 
   render(renderer: Renderer): void {
