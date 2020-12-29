@@ -5,9 +5,15 @@ export interface Coordinates {
   readonly y: number;
 }
 
-export function getMouseCoordinates(
-  event: MouseEvent<HTMLCanvasElement>
-): Coordinates {
+export interface Consumer<T> {
+  (item: T): void;
+}
+
+export interface Predicate<T> {
+  (item: T): boolean;
+}
+
+export function getMouseCoordinates(event: MouseEvent<HTMLCanvasElement>): Coordinates {
   const { clientX, clientY } = event;
   const boundingClientRect = event.currentTarget.getBoundingClientRect();
 
@@ -17,10 +23,7 @@ export function getMouseCoordinates(
   return { x, y };
 }
 
-export function subtractCoords(
-  vec1: Coordinates,
-  vec2: Coordinates
-): Coordinates {
+export function subtractCoords(vec1: Coordinates, vec2: Coordinates): Coordinates {
   const x = vec1.x - vec2.x;
   const y = vec1.y - vec2.y;
   return { x, y };

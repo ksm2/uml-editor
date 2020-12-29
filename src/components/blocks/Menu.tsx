@@ -7,10 +7,7 @@ interface Props {
 
 function Menu({ children }: Props) {
   return (
-    <nav
-      className="navbar navbar-expand-lg navbar-dark bg-dark"
-      style={{ gridArea: "menu" }}
-    >
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark" style={{ gridArea: "menu" }}>
       <ContainerFluid>
         <span className="navbar-brand">Diagram Editor</span>
         <ul className="navbar-nav me-auto">{children}</ul>

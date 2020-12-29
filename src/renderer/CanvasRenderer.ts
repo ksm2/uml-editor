@@ -99,7 +99,7 @@ class CanvasRenderer implements Renderer {
           classifier.height / 2,
           0,
           0,
-          2 * Math.PI
+          2 * Math.PI,
         );
         return;
       case Shape.FOLDER:
@@ -119,10 +119,7 @@ class CanvasRenderer implements Renderer {
 
         this.ctx.moveTo(classifier.width - NOTE_SIZE, classifier.height);
         this.ctx.lineTo(classifier.width, classifier.height - NOTE_SIZE);
-        this.ctx.lineTo(
-          classifier.width - NOTE_SIZE,
-          classifier.height - NOTE_SIZE
-        );
+        this.ctx.lineTo(classifier.width - NOTE_SIZE, classifier.height - NOTE_SIZE);
         this.ctx.closePath();
         return;
       case Shape.BOX:
@@ -137,10 +134,7 @@ class CanvasRenderer implements Renderer {
 
         this.ctx.moveTo(classifier.width, 0);
         this.ctx.lineTo(classifier.width, classifier.height);
-        this.ctx.lineTo(
-          classifier.width + BOX_DEPTH,
-          classifier.height - BOX_DEPTH
-        );
+        this.ctx.lineTo(classifier.width + BOX_DEPTH, classifier.height - BOX_DEPTH);
         this.ctx.lineTo(classifier.width + BOX_DEPTH, -BOX_DEPTH);
         this.ctx.closePath();
 
@@ -170,31 +164,20 @@ class CanvasRenderer implements Renderer {
         this.ctx.lineTo(COMPONENT_WIDTH / 2, COMPONENT_Y + COMPONENT_HEIGHT);
         this.ctx.lineTo(0, COMPONENT_Y + COMPONENT_HEIGHT);
         this.ctx.lineTo(0, COMPONENT_Y + COMPONENT_HEIGHT * 2);
-        this.ctx.lineTo(
-          COMPONENT_WIDTH / 2,
-          COMPONENT_Y + COMPONENT_HEIGHT * 2
-        );
-        this.ctx.lineTo(
-          COMPONENT_WIDTH / 2,
-          COMPONENT_Y + COMPONENT_HEIGHT * 3
-        );
+        this.ctx.lineTo(COMPONENT_WIDTH / 2, COMPONENT_Y + COMPONENT_HEIGHT * 2);
+        this.ctx.lineTo(COMPONENT_WIDTH / 2, COMPONENT_Y + COMPONENT_HEIGHT * 3);
         this.ctx.lineTo(0, COMPONENT_Y + COMPONENT_HEIGHT * 3);
         this.ctx.lineTo(0, classifier.height);
         this.ctx.lineTo(classifier.width, classifier.height);
         this.ctx.lineTo(classifier.width, 0);
         this.ctx.closePath();
 
-        this.ctx.rect(
-          COMPONENT_WIDTH / -2,
-          COMPONENT_Y,
-          COMPONENT_WIDTH,
-          COMPONENT_HEIGHT
-        );
+        this.ctx.rect(COMPONENT_WIDTH / -2, COMPONENT_Y, COMPONENT_WIDTH, COMPONENT_HEIGHT);
         this.ctx.rect(
           COMPONENT_WIDTH / -2,
           COMPONENT_Y + 2 * COMPONENT_HEIGHT,
           COMPONENT_WIDTH,
-          COMPONENT_HEIGHT
+          COMPONENT_HEIGHT,
         );
         return;
     }
@@ -280,11 +263,7 @@ class CanvasRenderer implements Renderer {
   }
 
   renderStereotype(stereotype: Stereotype): void {
-    this.drawText(
-      `«${this.context[0]}»`,
-      "normal normal 1rem system-ui",
-      "center"
-    );
+    this.drawText(`«${this.context[0]}»`, "normal normal 1rem system-ui", "center");
     this.ctx.translate(0, 20);
   }
 
@@ -382,12 +361,7 @@ class CanvasRenderer implements Renderer {
 
   private renderHandleAtPoint(x: number, y: number): void {
     this.ctx.beginPath();
-    this.ctx.rect(
-      x - HANDLE_RADIUS,
-      y - HANDLE_RADIUS,
-      HANDLE_RADIUS * 2,
-      HANDLE_RADIUS * 2
-    );
+    this.ctx.rect(x - HANDLE_RADIUS, y - HANDLE_RADIUS, HANDLE_RADIUS * 2, HANDLE_RADIUS * 2);
     this.ctx.fill();
     this.ctx.stroke();
   }
@@ -406,10 +380,7 @@ class CanvasRenderer implements Renderer {
   }
 
   private isPointInHandle(handle: Handle, x: number, y: number): boolean {
-    return (
-      Math.abs(x - handle.x) <= HANDLE_RADIUS &&
-      Math.abs(y - handle.y) <= HANDLE_RADIUS
-    );
+    return Math.abs(x - handle.x) <= HANDLE_RADIUS && Math.abs(y - handle.y) <= HANDLE_RADIUS;
   }
 
   private *getClassifierHandles(classifier: Classifier): Generator<Handle> {
@@ -420,17 +391,9 @@ class CanvasRenderer implements Renderer {
 
     yield { x: x1, y: y1, anchor: Anchor.NW };
     yield { x: classifier.getCenterX(), y: y1, anchor: Anchor.N };
-    yield {
-      x: x2,
-      y: y1,
-      anchor: Anchor.NE,
-    };
+    yield { x: x2, y: y1, anchor: Anchor.NE };
     yield { x: x1, y: classifier.getCenterY(), anchor: Anchor.W };
-    yield {
-      x: x2,
-      y: classifier.getCenterY(),
-      anchor: Anchor.E,
-    };
+    yield { x: x2, y: classifier.getCenterY(), anchor: Anchor.E };
     yield { x: x1, y: y2, anchor: Anchor.SW };
     yield { x: classifier.getCenterX(), y: y2, anchor: Anchor.S };
     yield { x: x2, y: y2, anchor: Anchor.SE };

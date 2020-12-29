@@ -12,13 +12,7 @@ class Classifier extends AbstractElement {
   height: number;
   shape: Shape = Shape.RECTANGLE;
 
-  constructor(
-    anchor: Anchor,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ) {
+  constructor(anchor: Anchor, x: number, y: number, width: number, height: number) {
     super();
     this.anchor = anchor;
     this.x = x;

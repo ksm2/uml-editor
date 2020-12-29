@@ -1,12 +1,7 @@
 import { MouseEvent, MutableRefObject, useEffect, useRef } from "react";
 import { Classifier, Diagram, Element } from "../../model";
 import { CanvasRenderer } from "../../renderer";
-import {
-  Coordinates,
-  getMouseCoordinates,
-  roundCoordsBy,
-  subtractCoords,
-} from "../../utils";
+import { Coordinates, getMouseCoordinates, roundCoordsBy, subtractCoords } from "../../utils";
 
 interface Props {
   diagram: Diagram;
@@ -16,12 +11,8 @@ interface Props {
 function Canvas({ diagram, onChange }: Props) {
   const div = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
-  const mouseDownCoords = useRef<Coordinates>(
-    null
-  ) as MutableRefObject<Coordinates>;
-  const mouseDownPosition = useRef<Coordinates>(
-    null
-  ) as MutableRefObject<Coordinates>;
+  const mouseDownCoords = useRef<Coordinates>(null) as MutableRefObject<Coordinates>;
+  const mouseDownPosition = useRef<Coordinates>(null) as MutableRefObject<Coordinates>;
 
   useEffect(() => {
     const renderer = new CanvasRenderer(canvas.current!);
@@ -54,7 +45,7 @@ function Canvas({ diagram, onChange }: Props) {
       if (selectedElement instanceof Classifier) {
         const { x: deltaX, y: deltaY } = roundCoordsBy(
           subtractCoords({ x, y }, mouseDownCoords.current!),
-          20
+          20,
         );
         selectedElement.x = mouseDownPosition.current!.x + deltaX;
         selectedElement.y = mouseDownPosition.current!.y + deltaY;
@@ -102,11 +93,7 @@ function Canvas({ diagram, onChange }: Props) {
         gridArea: "canvas",
       }}
     >
-      <canvas
-        ref={canvas}
-        onMouseMove={handleMouseMove}
-        onMouseDown={handleMouseDown}
-      />
+      <canvas ref={canvas} onMouseMove={handleMouseMove} onMouseDown={handleMouseDown} />
     </div>
   );
 }

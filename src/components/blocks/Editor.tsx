@@ -38,8 +38,7 @@ function completeIfInTag(cm: CodeMirror.Editor) {
     const tok = cm.getTokenAt(cm.getCursor());
     if (
       tok.type === "string" &&
-      (!/['"]/.test(tok.string.charAt(tok.string.length - 1)) ||
-        tok.string.length === 1)
+      (!/['"]/.test(tok.string.charAt(tok.string.length - 1)) || tok.string.length === 1)
     )
       return false;
     const inner = CodeMirror.innerMode(cm.getMode(), tok.state).state;
@@ -50,9 +49,7 @@ function completeIfInTag(cm: CodeMirror.Editor) {
 function Editor({ language, value, schema, onChange }: Props) {
   const onChangeRef = useRef(onChange);
   const ref = useRef<HTMLTextAreaElement>(null);
-  const editor = useRef<CodeMirror.Editor>(
-    null
-  ) as MutableRefObject<CodeMirror.Editor>;
+  const editor = useRef<CodeMirror.Editor>(null) as MutableRefObject<CodeMirror.Editor>;
 
   useEffect(() => {
     onChangeRef.current = onChange;

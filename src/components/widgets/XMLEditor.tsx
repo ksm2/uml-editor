@@ -9,12 +9,7 @@ interface Props {
 function XMLEditor({ xml, onChange }: Props) {
   return (
     <div className="XMLEditor" style={{ gridArea: "xml" }}>
-      <Editor
-        language="xml"
-        value={xml}
-        schema={xmlSchema}
-        onChange={onChange}
-      />
+      <Editor language="xml" value={xml} schema={xmlSchema} onChange={onChange} />
     </div>
   );
 }

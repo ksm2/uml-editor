@@ -85,7 +85,7 @@ class Serializer {
 
   protected parseClassifier<C extends Model.Classifier>(
     constructor: Class<C>,
-    element: Element
+    element: Element,
   ): C {
     const anchor = this.parseAnchorAttribute(element, "anchor");
     const x = this.parseIntAttribute(element, "x", 0);
@@ -93,39 +93,26 @@ class Serializer {
     const width = this.parseIntAttribute(element, "width", 200);
     const height = this.parseIntAttribute(element, "height", 120);
     const classifier = new constructor(anchor, x, y, width, height);
-    classifier.shape = this.parseEnumAttribute(
-      Model.Shape,
-      element,
-      "shape",
-      classifier.shape
-    );
+    classifier.shape = this.parseEnumAttribute(Model.Shape, element, "shape", classifier.shape);
     this.parseChildren(element, classifier);
     return classifier;
   }
 
   protected parseRelationship<R extends Model.Relationship>(
     constructor: Class<R>,
-    element: Element
+    element: Element,
   ): R {
     const from = this.parseClassifierAttribute(element, "from");
     const fromAnchor = this.parseAnchorAttribute(element, "fromAnchor");
     const to = this.parseClassifierAttribute(element, "to");
     const toAnchor = this.parseAnchorAttribute(element, "toAnchor");
     const relationship = new constructor(from, fromAnchor, to, toAnchor);
-    relationship.fromTip = this.parseTipAttribute(
-      element,
-      "fromTip",
-      relationship.fromTip
-    );
-    relationship.toTip = this.parseTipAttribute(
-      element,
-      "toTip",
-      relationship.toTip
-    );
+    relationship.fromTip = this.parseTipAttribute(element, "fromTip", relationship.fromTip);
+    relationship.toTip = this.parseTipAttribute(element, "toTip", relationship.toTip);
     relationship.linePattern = this.parseLinePatternAttribute(
       element,
       "linePattern",
-      relationship.linePattern
+      relationship.linePattern,
     );
     return relationship;
   }
@@ -150,10 +137,7 @@ class Serializer {
     }
   }
 
-  private parseClassifierAttribute(
-    element: Element,
-    attribute: string
-  ): Model.Classifier {
+  private parseClassifierAttribute(element: Element, attribute: string): Model.Classifier {
     if (element.hasAttribute(attribute)) {
       const id = element.getAttribute(attribute)!;
       const elementById = element.ownerDocument.getElementById(id);
@@ -166,50 +150,33 @@ class Serializer {
     }
 
     throw new Error(
-      `Invalid classifier: <${
-        element.tagName
-      } ${attribute}="${element.getAttribute(attribute)}" />`
+      `Invalid classifier: <${element.tagName} ${attribute}="${element.getAttribute(
+        attribute,
+      )}" />`,
     );
   }
 
-  private parseAnchorAttribute(
-    element: Element,
-    attribute: string
-  ): Model.Anchor {
-    return this.parseEnumAttribute(
-      Model.Anchor,
-      element,
-      attribute,
-      Model.Anchor.S
-    );
+  private parseAnchorAttribute(element: Element, attribute: string): Model.Anchor {
+    return this.parseEnumAttribute(Model.Anchor, element, attribute, Model.Anchor.S);
   }
 
-  private parseTipAttribute(
-    element: Element,
-    attribute: string,
-    fallback: Model.Tip
-  ): Model.Tip {
+  private parseTipAttribute(element: Element, attribute: string, fallback: Model.Tip): Model.Tip {
     return this.parseEnumAttribute(Model.Tip, element, attribute, fallback);
   }
 
   private parseLinePatternAttribute(
     element: Element,
     attribute: string,
-    fallback: Model.LinePattern
+    fallback: Model.LinePattern,
   ): Model.LinePattern {
-    return this.parseEnumAttribute(
-      Model.LinePattern,
-      element,
-      attribute,
-      fallback
-    );
+    return this.parseEnumAttribute(Model.LinePattern, element, attribute, fallback);
   }
 
   private parseEnumAttribute<E>(
     enumClass: Record<string, unknown>,
     element: Element,
     attribute: string,
-    fallback: E
+    fallback: E,
   ): E {
     if (element.hasAttribute(attribute)) {
       const value = element.getAttribute(attribute)!;
@@ -222,11 +189,7 @@ class Serializer {
     return fallback;
   }
 
-  private parseIntAttribute(
-    element: Element,
-    attribute: string,
-    fallback: number
-  ): number {
+  private parseIntAttribute(element: Element, attribute: string, fallback: number): number {
     if (element.hasAttribute(attribute)) {
       const value = parseInt(element.getAttribute(attribute)!, 10);
       if (!Number.isNaN(value)) {

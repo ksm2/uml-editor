@@ -15,12 +15,7 @@ class Relationship extends AbstractElement {
   toTip: Tip = Tip.NONE;
   linePattern: LinePattern = LinePattern.SOLID;
 
-  constructor(
-    from: Classifier,
-    fromAnchor: Anchor,
-    to: Classifier,
-    toAnchor: Anchor
-  ) {
+  constructor(from: Classifier, fromAnchor: Anchor, to: Classifier, toAnchor: Anchor) {
     super();
     this.from = from;
     this.fromAnchor = fromAnchor;

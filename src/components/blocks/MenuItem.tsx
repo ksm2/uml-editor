@@ -15,11 +15,7 @@ function MenuItem({ onClick, active = false, children }: Props) {
 
   return (
     <li className="nav-item">
-      <a
-        href="#"
-        onClick={handleClick}
-        className={classNames("nav-link", { active })}
-      >
+      <a href="#" onClick={handleClick} className={classNames("nav-link", { active })}>
         {children}
       </a>
     </li>

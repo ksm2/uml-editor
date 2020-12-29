@@ -1,3 +1,4 @@
+import { Consumer, Predicate } from "../utils";
 import AbstractElement from "./AbstractElement";
 import Element from "./Element";
 import Renderer from "./Renderer";
@@ -7,28 +8,22 @@ class Diagram extends AbstractElement {
     renderer.renderDiagram(this);
   }
 
-  forEach(callback: (element: Element) => void) {
-    this.forEachElement(this, callback);
+  forEach(consumer: Consumer<Element>): void {
+    this.forEachElement(this, consumer);
   }
 
-  private forEachElement(
-    root: Element,
-    callback: (element: Element) => void
-  ): void {
+  private forEachElement(root: Element, consumer: Consumer<Element>): void {
     for (const child of root.getChildren()) {
-      callback(child);
-      this.forEachElement(child, callback);
+      consumer(child);
+      this.forEachElement(child, consumer);
     }
   }
 
-  find(predicate: (element: Element) => boolean) {
+  find(predicate: Predicate<Element>): Element | undefined {
     return this.findElement(this, predicate);
   }
 
-  private findElement(
-    element: Element,
-    predicate: (element: Element) => boolean
-  ): Element | undefined {
+  private findElement(element: Element, predicate: Predicate<Element>): Element | undefined {
     const result = predicate(element);
     if (result) {
       return element;
