@@ -1,4 +1,5 @@
 import {
+  Anchor,
   Classifier,
   Diagram,
   LinePattern,
@@ -13,6 +14,13 @@ import {
 } from "../model";
 
 const PADDING = 10;
+const HANDLE_RADIUS = 4.5;
+
+interface Handle {
+  x: number;
+  y: number;
+  anchor: Anchor;
+}
 
 class CanvasRenderer implements Renderer {
   private readonly width: number[];
@@ -365,25 +373,67 @@ class CanvasRenderer implements Renderer {
     this.ctx.strokeStyle = "black";
     this.ctx.lineWidth = 1;
 
-    for (const x of [
-      classifier.getLeft(),
-      classifier.getCenterX(),
-      classifier.getRight(),
-    ]) {
-      this.renderHandleAtPoint(x, classifier.getTop());
-      this.renderHandleAtPoint(x, classifier.getBottom());
+    for (const { x, y } of this.getClassifierHandles(classifier)) {
+      this.renderHandleAtPoint(x, y);
     }
-    this.renderHandleAtPoint(classifier.getLeft(), classifier.getCenterY());
-    this.renderHandleAtPoint(classifier.getRight(), classifier.getCenterY());
 
     this.ctx.restore();
   }
 
   private renderHandleAtPoint(x: number, y: number): void {
     this.ctx.beginPath();
-    this.ctx.rect(x - 4.5, y - 4.5, 9, 9);
+    this.ctx.rect(
+      x - HANDLE_RADIUS,
+      y - HANDLE_RADIUS,
+      HANDLE_RADIUS * 2,
+      HANDLE_RADIUS * 2
+    );
     this.ctx.fill();
     this.ctx.stroke();
+  }
+
+  getCursorForPoint(diagram: Diagram, x: number, y: number): string {
+    for (const child of diagram.getChildren()) {
+      if (child instanceof Classifier && child.isSelected()) {
+        for (const handle of this.getClassifierHandles(child)) {
+          if (this.isPointInHandle(handle, x, y)) {
+            return `${Anchor[handle.anchor].toLowerCase()}-resize`;
+          }
+        }
+      }
+    }
+    return "default";
+  }
+
+  private isPointInHandle(handle: Handle, x: number, y: number): boolean {
+    return (
+      Math.abs(x - handle.x) <= HANDLE_RADIUS &&
+      Math.abs(y - handle.y) <= HANDLE_RADIUS
+    );
+  }
+
+  private *getClassifierHandles(classifier: Classifier): Generator<Handle> {
+    const x1 = classifier.getLeft();
+    const x2 = classifier.getRight();
+    const y1 = classifier.getTop();
+    const y2 = classifier.getBottom();
+
+    yield { x: x1, y: y1, anchor: Anchor.NW };
+    yield { x: classifier.getCenterX(), y: y1, anchor: Anchor.N };
+    yield {
+      x: x2,
+      y: y1,
+      anchor: Anchor.NE,
+    };
+    yield { x: x1, y: classifier.getCenterY(), anchor: Anchor.W };
+    yield {
+      x: x2,
+      y: classifier.getCenterY(),
+      anchor: Anchor.E,
+    };
+    yield { x: x1, y: y2, anchor: Anchor.SW };
+    yield { x: classifier.getCenterX(), y: y2, anchor: Anchor.S };
+    yield { x: x2, y: y2, anchor: Anchor.SE };
   }
 }
 

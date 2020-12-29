@@ -69,6 +69,8 @@ function Canvas({ diagram, onChange }: Props) {
       }
     });
 
+    canvas.current!.style.cursor = renderer.getCursorForPoint(diagram, x, y);
+
     renderer.renderDiagram(diagram);
   }
 
