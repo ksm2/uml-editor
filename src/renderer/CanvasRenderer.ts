@@ -1,5 +1,4 @@
 import { Color, Style } from "../css";
-import PropertyMap from "../css/PropertyMap";
 import {
   Anchor,
   Classifier,
@@ -8,284 +7,150 @@ import {
   Relationship,
   Renderer,
   Separator,
-  Shape,
   Stereotype,
   Text,
   Tip,
   Title,
 } from "../model";
+import CanvasClassifierRenderer from "./CanvasClassifierRenderer";
+import { HANDLE_RADIUS, PADDING } from "./constants";
 import Handle from "./Handle";
-
-const PADDING = 10;
-const HANDLE_RADIUS = 4.5;
+import RenderContext from "./RenderContext";
 
 class CanvasRenderer implements Renderer {
-  private readonly width: number[];
-  private readonly height: number[];
-  private readonly context: string[];
-  private readonly ctx: CanvasRenderingContext2D;
-  private readonly style: Style;
+  private readonly context: RenderContext;
+  private readonly canvas: CanvasRenderingContext2D;
+  private readonly classifierRenderer: CanvasClassifierRenderer;
 
   constructor(canvas: HTMLCanvasElement, style: Style) {
-    this.width = [canvas.width];
-    this.height = [canvas.height];
-    this.context = [];
-    this.ctx = canvas.getContext("2d")!;
-    this.style = style;
+    this.context = new RenderContext(canvas.width, canvas.height, style);
+    this.canvas = canvas.getContext("2d")!;
+    this.classifierRenderer = new CanvasClassifierRenderer(this, this.context, this.canvas);
   }
 
   renderDiagram(diagram: Diagram): void {
-    this.ctx.clearRect(0, 0, this.width[0], this.height[0]);
-    this.ctx.save();
-    this.ctx.translate(this.width[0] / 2, this.height[0] / 2);
+    this.canvas.clearRect(0, 0, this.context.getWidth(), this.context.getHeight());
+    this.canvas.save();
+    this.canvas.translate(this.context.getWidth() / 2, this.context.getHeight() / 2);
     for (const child of diagram.getChildren()) {
       child.render(this);
     }
     this.renderHandles(diagram);
-    this.ctx.restore();
+    this.canvas.restore();
   }
 
   renderClassifier(classifier: Classifier): void {
-    this.width.unshift(classifier.getWidth() - 2 * PADDING);
-    this.height.unshift(classifier.getHeight() - 2 * PADDING);
-    this.context.unshift(classifier.getTagName());
-
-    this.ctx.save();
-    this.ctx.translate(classifier.getLeft(), classifier.getTop());
-    this.applyStyle(classifier);
-    this.drawShape(classifier);
-    this.ctx.fill();
-    this.ctx.stroke();
-    this.ctx.clip();
-
-    this.ctx.translate(PADDING, PADDING);
-    for (const child of classifier.getChildren()) {
-      child.render(this);
-    }
-
-    this.width.shift();
-    this.height.shift();
-    this.context.shift();
-
-    this.ctx.restore();
-  }
-
-  private applyStyle(classifier: Classifier): void {
-    const properties = this.getContextProperties();
-    this.ctx.lineWidth = properties.getFloat("line-width", 1.5);
-    this.ctx.strokeStyle = properties.getColor("stroke", Color.DARK).toHexString();
-    let fill = properties.getColor("fill", Color.WHITE);
-    if (classifier.isHovered()) {
-      fill = fill.mix(Color.CYAN, 0.25);
-    }
-    this.ctx.fillStyle = fill.toHexString();
+    this.classifierRenderer.renderClassifier(classifier);
   }
 
   isPointInClassifier(classifier: Classifier, x: number, y: number): boolean {
-    this.ctx.save();
-    this.ctx.translate(classifier.getLeft(), classifier.getTop());
-    this.drawShape(classifier);
-    const result = this.ctx.isPointInPath(x, y);
-    this.ctx.restore();
-
-    return result;
-  }
-
-  private drawShape(classifier: Classifier): void {
-    this.ctx.beginPath();
-    const w = classifier.getWidth();
-    const h = classifier.getHeight();
-    switch (classifier.shape) {
-      case Shape.RECTANGLE:
-        this.ctx.rect(0, 0, w, h);
-        return;
-      case Shape.ELLIPSE:
-        this.ctx.ellipse(w / 2, h / 2, w / 2, h / 2, 0, 0, 2 * Math.PI);
-        return;
-      case Shape.FOLDER:
-        const FOLDER_WIDTH = 80;
-        const FOLDER_HEIGHT = 20;
-        this.ctx.rect(0, -FOLDER_HEIGHT, FOLDER_WIDTH, FOLDER_HEIGHT);
-        this.ctx.rect(0, 0, w, h);
-        return;
-      case Shape.NOTE:
-        const NOTE_SIZE = 30;
-        this.ctx.moveTo(0, 0);
-        this.ctx.lineTo(0, h);
-        this.ctx.lineTo(w - NOTE_SIZE, h);
-        this.ctx.lineTo(w, h - NOTE_SIZE);
-        this.ctx.lineTo(w, 0);
-        this.ctx.closePath();
-
-        this.ctx.moveTo(w - NOTE_SIZE, h);
-        this.ctx.lineTo(w, h - NOTE_SIZE);
-        this.ctx.lineTo(w - NOTE_SIZE, h - NOTE_SIZE);
-        this.ctx.closePath();
-        return;
-      case Shape.BOX:
-        const BOX_DEPTH = 20;
-        this.ctx.rect(0, 0, w, h);
-
-        this.ctx.moveTo(0, 0);
-        this.ctx.lineTo(w, 0);
-        this.ctx.lineTo(w + BOX_DEPTH, -BOX_DEPTH);
-        this.ctx.lineTo(BOX_DEPTH, -BOX_DEPTH);
-        this.ctx.closePath();
-
-        this.ctx.moveTo(w, 0);
-        this.ctx.lineTo(w, h);
-        this.ctx.lineTo(w + BOX_DEPTH, h - BOX_DEPTH);
-        this.ctx.lineTo(w + BOX_DEPTH, -BOX_DEPTH);
-        this.ctx.closePath();
-
-        return;
-      case Shape.FILE:
-        const FILE_SIZE = 30;
-        this.ctx.moveTo(FILE_SIZE, 0);
-        this.ctx.lineTo(0, FILE_SIZE);
-        this.ctx.lineTo(0, h);
-        this.ctx.lineTo(w, h);
-        this.ctx.lineTo(w, 0);
-        this.ctx.closePath();
-
-        this.ctx.moveTo(FILE_SIZE, 0);
-        this.ctx.lineTo(0, FILE_SIZE);
-        this.ctx.lineTo(FILE_SIZE, FILE_SIZE);
-        this.ctx.closePath();
-        return;
-      case Shape.COMPONENT:
-        const COMPONENT_WIDTH = 40;
-        const COMPONENT_HEIGHT = 20;
-        const COMPONENT_Y = (h - COMPONENT_HEIGHT * 3) / 2;
-
-        this.ctx.moveTo(0, 0);
-        this.ctx.lineTo(0, COMPONENT_Y);
-        this.ctx.lineTo(COMPONENT_WIDTH / 2, COMPONENT_Y);
-        this.ctx.lineTo(COMPONENT_WIDTH / 2, COMPONENT_Y + COMPONENT_HEIGHT);
-        this.ctx.lineTo(0, COMPONENT_Y + COMPONENT_HEIGHT);
-        this.ctx.lineTo(0, COMPONENT_Y + COMPONENT_HEIGHT * 2);
-        this.ctx.lineTo(COMPONENT_WIDTH / 2, COMPONENT_Y + COMPONENT_HEIGHT * 2);
-        this.ctx.lineTo(COMPONENT_WIDTH / 2, COMPONENT_Y + COMPONENT_HEIGHT * 3);
-        this.ctx.lineTo(0, COMPONENT_Y + COMPONENT_HEIGHT * 3);
-        this.ctx.lineTo(0, h);
-        this.ctx.lineTo(w, h);
-        this.ctx.lineTo(w, 0);
-        this.ctx.closePath();
-
-        this.ctx.rect(COMPONENT_WIDTH / -2, COMPONENT_Y, COMPONENT_WIDTH, COMPONENT_HEIGHT);
-        this.ctx.rect(
-          COMPONENT_WIDTH / -2,
-          COMPONENT_Y + 2 * COMPONENT_HEIGHT,
-          COMPONENT_WIDTH,
-          COMPONENT_HEIGHT,
-        );
-        return;
-    }
+    return this.classifierRenderer.isPointInClassifier(classifier, x, y);
   }
 
   renderRelationship(relationship: Relationship): void {
-    this.ctx.save();
-    this.ctx.beginPath();
-    this.ctx.moveTo(relationship.getX1(), relationship.getY1());
-    this.ctx.lineTo(relationship.getX2(), relationship.getY2());
+    this.canvas.save();
+    this.canvas.beginPath();
+    this.canvas.moveTo(relationship.getX1(), relationship.getY1());
+    this.canvas.lineTo(relationship.getX2(), relationship.getY2());
     this.applyRelationshipStyle(relationship);
-    this.ctx.stroke();
+    this.canvas.stroke();
     this.drawFromTip(relationship);
     this.drawToTip(relationship);
-    this.ctx.restore();
+    this.canvas.restore();
   }
 
   private applyRelationshipStyle(relationship: Relationship): void {
-    this.ctx.lineWidth = 1.5;
-    this.ctx.strokeStyle = "#212529";
-    this.ctx.fillStyle = "white";
+    this.canvas.lineWidth = 1.5;
+    this.canvas.strokeStyle = "#212529";
+    this.canvas.fillStyle = "white";
     switch (relationship.linePattern) {
       case LinePattern.SOLID:
-        this.ctx.setLineDash([]);
+        this.canvas.setLineDash([]);
         break;
       case LinePattern.DOTS:
-        this.ctx.setLineDash([2, 2]);
+        this.canvas.setLineDash([2, 2]);
         break;
       case LinePattern.SMALL_DASHES:
-        this.ctx.setLineDash([5, 5]);
+        this.canvas.setLineDash([5, 5]);
         break;
       case LinePattern.LARGE_DASHES:
-        this.ctx.setLineDash([10, 10]);
+        this.canvas.setLineDash([10, 10]);
         break;
       case LinePattern.TIGHT_DASHES:
-        this.ctx.setLineDash([15, 5]);
+        this.canvas.setLineDash([15, 5]);
         break;
     }
   }
 
   private drawFromTip(relationship: Relationship): void {
     if (relationship.fromTip !== Tip.NONE) {
-      this.ctx.save();
-      this.ctx.setLineDash([]);
-      this.ctx.translate(relationship.getX1(), relationship.getY1());
-      this.ctx.rotate(relationship.getAngle() + Math.PI);
+      this.canvas.save();
+      this.canvas.setLineDash([]);
+      this.canvas.translate(relationship.getX1(), relationship.getY1());
+      this.canvas.rotate(relationship.getAngle() + Math.PI);
       this.drawTip(relationship.fromTip);
-      this.ctx.restore();
+      this.canvas.restore();
     }
   }
 
   private drawToTip(relationship: Relationship): void {
     if (relationship.toTip !== Tip.NONE) {
-      this.ctx.save();
-      this.ctx.setLineDash([]);
-      this.ctx.translate(relationship.getX2(), relationship.getY2());
-      this.ctx.rotate(relationship.getAngle());
+      this.canvas.save();
+      this.canvas.setLineDash([]);
+      this.canvas.translate(relationship.getX2(), relationship.getY2());
+      this.canvas.rotate(relationship.getAngle());
       this.drawTip(relationship.toTip);
-      this.ctx.restore();
+      this.canvas.restore();
     }
   }
 
   renderText(text: Text) {
-    this.context.unshift("Text");
+    this.context.push("Text");
     this.drawText(text.text, "1.25rem", "left");
-    this.ctx.translate(0, 20);
-    this.context.shift();
+    this.canvas.translate(0, 20);
+    this.context.pop();
   }
 
   renderTitle(title: Title): void {
-    this.context.unshift("Title");
+    this.context.push("Title");
     this.drawText(title.text, "1.25rem", "center");
-    this.ctx.translate(0, 20);
-    this.context.shift();
+    this.canvas.translate(0, 20);
+    this.context.pop();
   }
 
   renderSeparator(separator: Separator): void {
-    this.ctx.save();
-    this.ctx.beginPath();
-    this.ctx.moveTo(-PADDING, PADDING);
-    this.ctx.lineTo(this.width[0] + PADDING, PADDING);
-    this.ctx.lineWidth = 1.5;
-    this.ctx.strokeStyle = "#212529";
-    this.ctx.stroke();
-    this.ctx.restore();
-    this.ctx.translate(0, 2 * PADDING);
+    this.canvas.save();
+    this.canvas.beginPath();
+    this.canvas.moveTo(-PADDING, PADDING);
+    this.canvas.lineTo(this.context.getWidth() + PADDING, PADDING);
+    this.canvas.lineWidth = 1.5;
+    this.canvas.strokeStyle = "#212529";
+    this.canvas.stroke();
+    this.canvas.restore();
+    this.canvas.translate(0, 2 * PADDING);
   }
 
   renderStereotype(stereotype: Stereotype): void {
-    this.context.unshift("Stereotype");
-    this.drawText(`«${this.context[0]}»`, "1rem", "center");
-    this.ctx.translate(0, 20);
-    this.context.shift();
+    const contextName = this.context.getName();
+    this.context.push("Stereotype");
+    this.drawText(`«${contextName}»`, "1rem", "center");
+    this.canvas.translate(0, 20);
+    this.context.pop();
   }
 
   private drawText(text: string, size: string, align: "left" | "center") {
-    const properties = this.getContextProperties();
+    const properties = this.context.getStyleProperties();
     const weight = properties.getString("font-weight", "normal");
     const style = properties.getString("font-style", "normal");
 
-    this.ctx.save();
-    this.ctx.beginPath();
-    this.ctx.font = `${style} ${weight} ${size} system-ui`;
-    this.ctx.fillStyle = properties.getColor("color", Color.DARK).toHexString();
-    const metrics = this.ctx.measureText(text);
-    const x = align === "center" ? (this.width[0] - metrics.width) / 2 : 0;
-    this.ctx.fillText(text, x, metrics.fontBoundingBoxAscent - 3);
-    this.ctx.restore();
+    this.canvas.save();
+    this.canvas.beginPath();
+    this.canvas.font = `${style} ${weight} ${size} system-ui`;
+    this.canvas.fillStyle = properties.getColor("color", Color.DARK).toHexString();
+    const metrics = this.canvas.measureText(text);
+    const x = align === "center" ? (this.context.getWidth() - metrics.width) / 2 : 0;
+    this.canvas.fillText(text, x, metrics.fontBoundingBoxAscent - 3);
+    this.canvas.restore();
   }
 
   private drawTip(tip: Tip): void {
@@ -297,80 +162,76 @@ class CanvasRenderer implements Renderer {
         this.drawTriangle();
         break;
       case Tip.FILLED_TRIANGLE:
-        this.ctx.fillStyle = this.ctx.strokeStyle;
+        this.canvas.fillStyle = this.canvas.strokeStyle;
         this.drawTriangle();
         break;
       case Tip.DIAMOND:
         this.drawDiamond();
         break;
       case Tip.FILLED_DIAMOND:
-        this.ctx.fillStyle = this.ctx.strokeStyle;
+        this.canvas.fillStyle = this.canvas.strokeStyle;
         this.drawDiamond();
         break;
       case Tip.CIRCLE:
         this.drawCircle();
         break;
       case Tip.FILLED_CIRCLE:
-        this.ctx.fillStyle = this.ctx.strokeStyle;
+        this.canvas.fillStyle = this.canvas.strokeStyle;
         this.drawCircle();
         break;
     }
   }
 
   private drawArrow() {
-    this.ctx.beginPath();
-    this.ctx.moveTo(0, 0);
-    this.ctx.lineTo(-20, 8);
-    this.ctx.moveTo(0, 0);
-    this.ctx.lineTo(-20, -8);
-    this.ctx.closePath();
-    this.ctx.stroke();
+    this.canvas.beginPath();
+    this.canvas.moveTo(0, 0);
+    this.canvas.lineTo(-20, 8);
+    this.canvas.moveTo(0, 0);
+    this.canvas.lineTo(-20, -8);
+    this.canvas.closePath();
+    this.canvas.stroke();
   }
 
   private drawTriangle(): void {
-    this.ctx.beginPath();
-    this.ctx.moveTo(0, 0);
-    this.ctx.lineTo(-20, 10);
-    this.ctx.lineTo(-20, -10);
-    this.ctx.closePath();
-    this.ctx.fill();
-    this.ctx.stroke();
+    this.canvas.beginPath();
+    this.canvas.moveTo(0, 0);
+    this.canvas.lineTo(-20, 10);
+    this.canvas.lineTo(-20, -10);
+    this.canvas.closePath();
+    this.canvas.fill();
+    this.canvas.stroke();
   }
 
   private drawDiamond(): void {
-    this.ctx.beginPath();
-    this.ctx.moveTo(0, 0);
-    this.ctx.lineTo(-15, 8);
-    this.ctx.lineTo(-30, 0);
-    this.ctx.lineTo(-15, -8);
-    this.ctx.closePath();
-    this.ctx.fill();
-    this.ctx.stroke();
+    this.canvas.beginPath();
+    this.canvas.moveTo(0, 0);
+    this.canvas.lineTo(-15, 8);
+    this.canvas.lineTo(-30, 0);
+    this.canvas.lineTo(-15, -8);
+    this.canvas.closePath();
+    this.canvas.fill();
+    this.canvas.stroke();
   }
 
   private drawCircle(): void {
-    this.ctx.beginPath();
-    this.ctx.ellipse(-10, 0, 10, 10, 0, 0, 2 * Math.PI);
-    this.ctx.closePath();
-    this.ctx.fill();
-    this.ctx.stroke();
-  }
-
-  private getContextProperties(): PropertyMap {
-    return this.style.getProperties([...this.context].reverse());
+    this.canvas.beginPath();
+    this.canvas.ellipse(-10, 0, 10, 10, 0, 0, 2 * Math.PI);
+    this.canvas.closePath();
+    this.canvas.fill();
+    this.canvas.stroke();
   }
 
   private renderHandles(diagram: Diagram): void {
-    this.ctx.save();
-    this.ctx.fillStyle = "white";
-    this.ctx.strokeStyle = "black";
-    this.ctx.lineWidth = 1;
+    this.canvas.save();
+    this.canvas.fillStyle = "white";
+    this.canvas.strokeStyle = "black";
+    this.canvas.lineWidth = 1;
 
     for (const { x, y } of this.getHandles(diagram)) {
       this.renderHandleAtPoint(x, y);
     }
 
-    this.ctx.restore();
+    this.canvas.restore();
   }
 
   private *getHandles(diagram: Diagram): Generator<Handle> {
@@ -382,10 +243,10 @@ class CanvasRenderer implements Renderer {
   }
 
   private renderHandleAtPoint(x: number, y: number): void {
-    this.ctx.beginPath();
-    this.ctx.rect(x - HANDLE_RADIUS, y - HANDLE_RADIUS, HANDLE_RADIUS * 2, HANDLE_RADIUS * 2);
-    this.ctx.fill();
-    this.ctx.stroke();
+    this.canvas.beginPath();
+    this.canvas.rect(x - HANDLE_RADIUS, y - HANDLE_RADIUS, HANDLE_RADIUS * 2, HANDLE_RADIUS * 2);
+    this.canvas.fill();
+    this.canvas.stroke();
   }
 
   findHandleForPoint(diagram: Diagram, x: number, y: number): Handle | undefined {

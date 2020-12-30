@@ -1,4 +1,4 @@
-import { Consumer, Predicate } from "../utils";
+import { Predicate } from "../utils";
 import AbstractElement from "./AbstractElement";
 import Element from "./Element";
 import Renderer from "./Renderer";

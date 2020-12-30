@@ -1,5 +1,6 @@
 import Anchor from "./Anchor";
 import Classifier from "./Classifier";
+import type ClassifierRenderer from "./ClassifierRenderer";
 import Diagram from "./Diagram";
 import type Element from "./Element";
 import LinePattern from "./LinePattern";
@@ -27,4 +28,4 @@ export {
   Tip,
 };
 
-export type { Element, Rectangle, Renderer };
+export type { ClassifierRenderer, Element, Rectangle, Renderer };

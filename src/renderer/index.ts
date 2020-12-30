@@ -1,4 +1,5 @@
+import CanvasClassifierRenderer from "./CanvasClassifierRenderer";
 import CanvasRenderer from "./CanvasRenderer";
 import Handle from "./Handle";
 
-export { CanvasRenderer, Handle };
+export { CanvasClassifierRenderer, CanvasRenderer, Handle };
