@@ -46,7 +46,7 @@ class CanvasRenderer implements Renderer {
     this.ctx.translate(classifier.getLeft(), classifier.getTop());
     this.ctx.lineWidth = 1.5;
     this.ctx.strokeStyle = "#212529";
-    this.ctx.fillStyle = classifier.isHovered() ? "#ffe083" : "white";
+    this.ctx.fillStyle = classifier.isHovered() ? "#9accbb" : "white";
     this.drawShape(classifier);
     this.ctx.fill();
     this.ctx.stroke();

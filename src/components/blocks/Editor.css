@@ -5,3 +5,8 @@
 .cm-s-nord span.cm-tag {
   color: var(--bs-yellow);
 }
+
+.cm-s-nord span.cm-attribute,
+.cm-s-nord span.cm-property {
+  color: #9accbb;
+}
