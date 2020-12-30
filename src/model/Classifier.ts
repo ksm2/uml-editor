@@ -23,7 +23,7 @@ class Classifier extends AbstractElement {
   }
 
   getTagName(): string {
-    return Object.getPrototypeOf(this).constructor.name;
+    return "Classifier";
   }
 
   getRectangle(): Rectangle {

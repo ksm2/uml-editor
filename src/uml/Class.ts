@@ -1,5 +1,9 @@
 import { Classifier } from "../model";
 
-class Class extends Classifier {}
+class Class extends Classifier {
+  getTagName(): string {
+    return "Class";
+  }
+}
 
 export default Class;
