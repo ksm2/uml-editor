@@ -10,3 +10,8 @@
 .cm-s-nord span.cm-property {
   color: #9accbb;
 }
+
+.CSSEditor .cm-s-nord.CodeMirror,
+.CSSEditor .cm-s-nord .CodeMirror-gutters {
+  background: #373f4d;
+}
