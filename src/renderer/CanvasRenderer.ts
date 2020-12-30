@@ -1,3 +1,5 @@
+import { Color, Style } from "../css";
+import PropertyMap from "../css/PropertyMap";
 import {
   Anchor,
   Classifier,
@@ -22,12 +24,14 @@ class CanvasRenderer implements Renderer {
   private readonly height: number[];
   private readonly context: string[];
   private readonly ctx: CanvasRenderingContext2D;
+  private readonly style: Style;
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, style: Style) {
     this.width = [canvas.width];
     this.height = [canvas.height];
-    this.context = ["Canvas"];
+    this.context = [];
     this.ctx = canvas.getContext("2d")!;
+    this.style = style;
   }
 
   renderDiagram(diagram: Diagram): void {
@@ -42,28 +46,39 @@ class CanvasRenderer implements Renderer {
   }
 
   renderClassifier(classifier: Classifier): void {
+    this.width.unshift(classifier.getWidth() - 2 * PADDING);
+    this.height.unshift(classifier.getHeight() - 2 * PADDING);
+    this.context.unshift(classifier.getTagName());
+
     this.ctx.save();
     this.ctx.translate(classifier.getLeft(), classifier.getTop());
-    this.ctx.lineWidth = 1.5;
-    this.ctx.strokeStyle = "#212529";
-    this.ctx.fillStyle = classifier.isHovered() ? "#9accbb" : "white";
+    this.applyStyle(classifier);
     this.drawShape(classifier);
     this.ctx.fill();
     this.ctx.stroke();
     this.ctx.clip();
 
     this.ctx.translate(PADDING, PADDING);
-    this.width.unshift(classifier.getWidth() - 2 * PADDING);
-    this.height.unshift(classifier.getHeight() - 2 * PADDING);
-    this.context.unshift(Object.getPrototypeOf(classifier).constructor.name);
     for (const child of classifier.getChildren()) {
       child.render(this);
     }
+
     this.width.shift();
     this.height.shift();
     this.context.shift();
 
     this.ctx.restore();
+  }
+
+  private applyStyle(classifier: Classifier): void {
+    const properties = this.getContextProperties();
+    this.ctx.lineWidth = properties.getFloat("line-width", 1.5);
+    this.ctx.strokeStyle = properties.getColor("stroke", Color.DARK).toHexString();
+    let fill = properties.getColor("fill", Color.WHITE);
+    if (classifier.isHovered()) {
+      fill = fill.mix(Color.CYAN, 0.25);
+    }
+    this.ctx.fillStyle = fill.toHexString();
   }
 
   isPointInClassifier(classifier: Classifier, x: number, y: number): boolean {
@@ -226,13 +241,17 @@ class CanvasRenderer implements Renderer {
   }
 
   renderText(text: Text) {
-    this.drawText(text.text, "normal normal 1.25rem system-ui", "left");
+    this.context.unshift("Text");
+    this.drawText(text.text, "1.25rem", "left");
     this.ctx.translate(0, 20);
+    this.context.shift();
   }
 
   renderTitle(title: Title): void {
-    this.drawText(title.text, "normal bold 1.25rem system-ui", "center");
+    this.context.unshift("Title");
+    this.drawText(title.text, "1.25rem", "center");
     this.ctx.translate(0, 20);
+    this.context.shift();
   }
 
   renderSeparator(separator: Separator): void {
@@ -248,15 +267,21 @@ class CanvasRenderer implements Renderer {
   }
 
   renderStereotype(stereotype: Stereotype): void {
-    this.drawText(`«${this.context[0]}»`, "normal normal 1rem system-ui", "center");
+    this.context.unshift("Stereotype");
+    this.drawText(`«${this.context[0]}»`, "1rem", "center");
     this.ctx.translate(0, 20);
+    this.context.shift();
   }
 
-  private drawText(text: string, font: string, align: "left" | "center") {
+  private drawText(text: string, size: string, align: "left" | "center") {
+    const properties = this.getContextProperties();
+    const weight = properties.getString("font-weight", "normal");
+    const style = properties.getString("font-style", "normal");
+
     this.ctx.save();
     this.ctx.beginPath();
-    this.ctx.font = font;
-    this.ctx.fillStyle = "#212529";
+    this.ctx.font = `${style} ${weight} ${size} system-ui`;
+    this.ctx.fillStyle = properties.getColor("color", Color.DARK).toHexString();
     const metrics = this.ctx.measureText(text);
     const x = align === "center" ? (this.width[0] - metrics.width) / 2 : 0;
     this.ctx.fillText(text, x, metrics.fontBoundingBoxAscent - 3);
@@ -329,6 +354,10 @@ class CanvasRenderer implements Renderer {
     this.ctx.closePath();
     this.ctx.fill();
     this.ctx.stroke();
+  }
+
+  private getContextProperties(): PropertyMap {
+    return this.style.getProperties([...this.context].reverse());
   }
 
   private renderHandles(diagram: Diagram): void {

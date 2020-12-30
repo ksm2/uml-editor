@@ -22,6 +22,10 @@ class Classifier extends AbstractElement {
     this.height = height;
   }
 
+  getTagName(): string {
+    return Object.getPrototypeOf(this).constructor.name;
+  }
+
   getRectangle(): Rectangle {
     return {
       x: this.getLeft(),

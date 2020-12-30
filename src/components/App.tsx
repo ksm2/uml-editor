@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { parser, Style } from "../css";
 import { Diagram, Element } from "../model";
 import { serializer } from "../serializer";
 import "./App.css";
@@ -6,6 +7,7 @@ import { AppMenu, Canvas, CSSEditor, XMLEditor } from "./widgets";
 
 function App() {
   const [diagram, setDiagram] = useState(() => new Diagram());
+  const [style, setStyle] = useState(() => new Style());
   const [xml, setXml] = useState("");
   const [css, setCss] = useState("");
 
@@ -15,7 +17,8 @@ function App() {
   }
 
   function handleCssChange(css: string): void {
-    // TODO
+    const style = parser.parseFromString(css);
+    setStyle(style);
   }
 
   function handleCanvasChange(element: Element): void {
@@ -57,7 +60,9 @@ Class {
 `;
 
     const diagram = serializer.deserialize(initialXml);
+    const style = parser.parseFromString(initialCss);
     setDiagram(diagram);
+    setStyle(style);
     setXml(initialXml);
     setCss(initialCss);
   }, []);
@@ -67,7 +72,7 @@ Class {
       <AppMenu />
       <XMLEditor xml={xml} onChange={handleXmlChange} />
       <CSSEditor css={css} onChange={handleCssChange} />
-      <Canvas diagram={diagram} onChange={handleCanvasChange} />
+      <Canvas diagram={diagram} style={style} onChange={handleCanvasChange} />
     </div>
   );
 }

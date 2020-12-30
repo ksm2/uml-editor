@@ -1,14 +1,16 @@
 import { MouseEvent, MutableRefObject, useEffect, useRef } from "react";
+import { Style } from "../../css";
 import { Anchor, Classifier, Diagram, Element, Rectangle } from "../../model";
 import { CanvasRenderer, Handle } from "../../renderer";
 import { Coordinates, getMouseCoordinates, roundCoordsBy, subtractCoords } from "../../utils";
 
 interface Props {
   diagram: Diagram;
+  style: Style;
   onChange?: (element: Element) => void;
 }
 
-function Canvas({ diagram, onChange }: Props) {
+function Canvas({ diagram, style, onChange }: Props) {
   const div = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const mouseDownCoords = useRef<Coordinates>(null) as MutableRefObject<Coordinates | null>;
@@ -18,17 +20,12 @@ function Canvas({ diagram, onChange }: Props) {
   >;
 
   useEffect(() => {
-    const renderer = new CanvasRenderer(canvas.current!);
-    renderer.renderDiagram(diagram);
-  }, [diagram]);
-
-  useEffect(() => {
     function onResize() {
       const rect = div.current!.getBoundingClientRect();
       canvas.current!.width = Math.trunc(rect.width);
       canvas.current!.height = Math.trunc(rect.height);
 
-      const renderer = new CanvasRenderer(canvas.current!);
+      const renderer = new CanvasRenderer(canvas.current!, style);
       renderer.renderDiagram(diagram);
     }
 
@@ -37,7 +34,7 @@ function Canvas({ diagram, onChange }: Props) {
     return () => {
       window.removeEventListener("resize", onResize);
     };
-  }, [diagram]);
+  }, [diagram, style]);
 
   function setCursor(cursor: string): void {
     canvas.current!.style.cursor = cursor;
@@ -86,7 +83,7 @@ function Canvas({ diagram, onChange }: Props) {
   }
 
   function handleMouseMove(event: MouseEvent<HTMLCanvasElement>) {
-    const renderer = new CanvasRenderer(canvas.current!);
+    const renderer = new CanvasRenderer(canvas.current!, style);
     const { x, y } = getMouseCoordinates(event);
 
     if (event.buttons & 1) {
@@ -145,7 +142,7 @@ function Canvas({ diagram, onChange }: Props) {
   }
 
   function handleMouseDown(event: MouseEvent<HTMLCanvasElement>) {
-    const renderer = new CanvasRenderer(canvas.current!);
+    const renderer = new CanvasRenderer(canvas.current!, style);
     const { x, y } = getMouseCoordinates(event);
 
     renderMouseDown(renderer, x, y);

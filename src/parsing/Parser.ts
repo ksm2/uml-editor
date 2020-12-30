@@ -28,6 +28,11 @@ abstract class Parser<T, D> {
     }
   }
 
+  protected parseOneOf<U1, U2, U3>(
+    parser1: () => U1,
+    parser2: () => U2,
+    parser3: () => U3,
+  ): U1 | U2 | U3;
   protected parseOneOf<U1, U2>(parser1: () => U1, parser2: () => U2): U1 | U2;
   protected parseOneOf<U1>(parser1: () => U1): U1;
   protected parseOneOf(...parsers: Array<() => unknown>): unknown {
