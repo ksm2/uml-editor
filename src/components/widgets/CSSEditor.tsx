@@ -1,24 +1,14 @@
 import Editor from "../blocks/Editor";
 
-function CSSEditor() {
-  return (
-    <div className="CSSEditor" style={{ gridArea: "css" }}>
-      <Editor
-        language="css"
-        value={`\
-Interface {
-  Title {
-    font-style: italic;
-  }
+interface Props {
+  css: string;
+  onChange?: (css: string) => void;
 }
 
-Class {
-  Title {
-    font-weight: bold;
-  }
-}
-`}
-      />
+function CSSEditor({ css, onChange }: Props) {
+  return (
+    <div className="CSSEditor" style={{ gridArea: "css" }}>
+      <Editor language="css" value={css} onChange={onChange} />
     </div>
   );
 }

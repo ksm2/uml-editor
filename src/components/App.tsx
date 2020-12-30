@@ -7,10 +7,15 @@ import { AppMenu, Canvas, CSSEditor, XMLEditor } from "./widgets";
 function App() {
   const [diagram, setDiagram] = useState(() => new Diagram());
   const [xml, setXml] = useState("");
+  const [css, setCss] = useState("");
 
   function handleXmlChange(xml: string): void {
     const diagram = serializer.deserialize(xml);
     setDiagram(diagram);
+  }
+
+  function handleCssChange(css: string): void {
+    // TODO
   }
 
   function handleCanvasChange(element: Element): void {
@@ -37,16 +42,31 @@ function App() {
   <Implementation from="c1" to="i1" fromAnchor="n" toAnchor="s"/>
 </Diagram>
 `;
+    const initialCss = `\
+Interface {
+  Title {
+    font-style: italic;
+  }
+}
+
+Class {
+  Title {
+    font-weight: bold;
+  }
+}
+`;
+
     const diagram = serializer.deserialize(initialXml);
     setDiagram(diagram);
     setXml(initialXml);
+    setCss(initialCss);
   }, []);
 
   return (
     <div className="App bg-secondary">
       <AppMenu />
       <XMLEditor xml={xml} onChange={handleXmlChange} />
-      <CSSEditor />
+      <CSSEditor css={css} onChange={handleCssChange} />
       <Canvas diagram={diagram} onChange={handleCanvasChange} />
     </div>
   );
