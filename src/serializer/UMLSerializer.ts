@@ -33,8 +33,6 @@ class UMLSerializer extends Serializer {
         return this.parseClassifier(UML.Interface, element);
       case "Note":
         return this.parseClassifier(UML.Note, element);
-      case "Object":
-        return this.parseClassifier(UML.Object, element);
       case "Package":
         return this.parseClassifier(UML.Package, element);
       case "Primitive":

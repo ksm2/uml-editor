@@ -12,7 +12,6 @@ import Generalization from "./Generalization";
 import Implementation from "./Implementation";
 import Interface from "./Interface";
 import Note from "./Note";
-import Object from "./Object";
 import Package from "./Package";
 import Primitive from "./Primitive";
 
@@ -31,7 +30,6 @@ export {
   Implementation,
   Interface,
   Note,
-  Object,
   Package,
   Primitive,
 };
