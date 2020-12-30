@@ -1,11 +1,7 @@
-import { Menu, MenuItem } from "../blocks";
+import { Menu } from "../blocks";
 
 function AppMenu() {
-  return (
-    <Menu>
-      <MenuItem>File</MenuItem>
-    </Menu>
-  );
+  return <Menu />;
 }
 
 export default AppMenu;

@@ -1,5 +1,5 @@
 {
-  "name": "diagram-renderer",
+  "name": "uml-editor",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -27,7 +27,15 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prettier:write": "prettier --write './src/**/*.{css,md,ts,tsx}'",
-    "prettier:check": "prettier --check './src/**/*.{css,md,ts,tsx}'"
+    "prettier:check": "prettier --check './src/**/*.{css,md,ts,tsx}'",
+    "favicon:16": "inkscape -w 16 -h 16 -o misc/favicon16.png misc/favicon.svg",
+    "favicon:24": "inkscape -w 24 -h 24 -o misc/favicon24.png misc/favicon.svg",
+    "favicon:32": "inkscape -w 32 -h 32 -o misc/favicon32.png misc/favicon.svg",
+    "favicon:64": "inkscape -w 64 -h 64 -o misc/favicon64.png misc/favicon.svg",
+    "logo:nav": "inkscape -w 512 -h 512 -o src/components/blocks/logo.png misc/favicon.svg",
+    "logo:192": "inkscape -w 192 -h 192 -o public/logo192.png misc/favicon.svg",
+    "logo:512": "inkscape -w 512 -h 512 -o public/logo512.png misc/favicon.svg",
+    "favicon:ico": "convert misc/favicon16.png misc/favicon24.png misc/favicon32.png misc/favicon64.png public/favicon.ico"
   },
   "eslintConfig": {
     "extends": [
