@@ -3,6 +3,7 @@ import Classifier from "./Classifier";
 import Diagram from "./Diagram";
 import type Element from "./Element";
 import LinePattern from "./LinePattern";
+import type Rectangle from "./Rectangle";
 import Relationship from "./Relationship";
 import type Renderer from "./Renderer";
 import Separator from "./Separator";
@@ -26,4 +27,4 @@ export {
   Tip,
 };
 
-export type { Element, Renderer };
+export type { Element, Rectangle, Renderer };

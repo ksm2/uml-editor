@@ -24,19 +24,19 @@ class Relationship extends AbstractElement {
   }
 
   getX1(): number {
-    return this.from.getLeft() + qsin(this.fromAnchor) * this.from.width;
+    return this.from.getLeft() + qsin(this.fromAnchor) * this.from.getWidth();
   }
 
   getY1(): number {
-    return this.from.getTop() + qcos(this.fromAnchor) * this.from.height;
+    return this.from.getTop() + qcos(this.fromAnchor) * this.from.getHeight();
   }
 
   getX2(): number {
-    return this.to.getLeft() + qsin(this.toAnchor) * this.to.width;
+    return this.to.getLeft() + qsin(this.toAnchor) * this.to.getWidth();
   }
 
   getY2(): number {
-    return this.to.getTop() + qcos(this.toAnchor) * this.to.height;
+    return this.to.getTop() + qcos(this.toAnchor) * this.to.getHeight();
   }
 
   getAngle(): number {

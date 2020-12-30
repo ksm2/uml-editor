@@ -12,15 +12,10 @@ import {
   Tip,
   Title,
 } from "../model";
+import Handle from "./Handle";
 
 const PADDING = 10;
 const HANDLE_RADIUS = 4.5;
-
-interface Handle {
-  x: number;
-  y: number;
-  anchor: Anchor;
-}
 
 class CanvasRenderer implements Renderer {
   private readonly width: number[];
@@ -42,11 +37,7 @@ class CanvasRenderer implements Renderer {
     for (const child of diagram.getChildren()) {
       child.render(this);
     }
-    for (const child of diagram.getChildren()) {
-      if (child instanceof Classifier && child.isSelected()) {
-        this.renderClassifierHandles(child);
-      }
-    }
+    this.renderHandles(diagram);
     this.ctx.restore();
   }
 
@@ -62,8 +53,8 @@ class CanvasRenderer implements Renderer {
     this.ctx.clip();
 
     this.ctx.translate(PADDING, PADDING);
-    this.width.unshift(classifier.width - 2 * PADDING);
-    this.height.unshift(classifier.height - 2 * PADDING);
+    this.width.unshift(classifier.getWidth() - 2 * PADDING);
+    this.height.unshift(classifier.getHeight() - 2 * PADDING);
     this.context.unshift(Object.getPrototypeOf(classifier).constructor.name);
     for (const child of classifier.getChildren()) {
       child.render(this);
@@ -87,55 +78,49 @@ class CanvasRenderer implements Renderer {
 
   private drawShape(classifier: Classifier): void {
     this.ctx.beginPath();
+    const w = classifier.getWidth();
+    const h = classifier.getHeight();
     switch (classifier.shape) {
       case Shape.RECTANGLE:
-        this.ctx.rect(0, 0, classifier.width, classifier.height);
+        this.ctx.rect(0, 0, w, h);
         return;
       case Shape.ELLIPSE:
-        this.ctx.ellipse(
-          classifier.width / 2,
-          classifier.height / 2,
-          classifier.width / 2,
-          classifier.height / 2,
-          0,
-          0,
-          2 * Math.PI,
-        );
+        this.ctx.ellipse(w / 2, h / 2, w / 2, h / 2, 0, 0, 2 * Math.PI);
         return;
       case Shape.FOLDER:
         const FOLDER_WIDTH = 80;
         const FOLDER_HEIGHT = 20;
         this.ctx.rect(0, -FOLDER_HEIGHT, FOLDER_WIDTH, FOLDER_HEIGHT);
-        this.ctx.rect(0, 0, classifier.width, classifier.height);
+        this.ctx.rect(0, 0, w, h);
         return;
       case Shape.NOTE:
         const NOTE_SIZE = 30;
         this.ctx.moveTo(0, 0);
-        this.ctx.lineTo(0, classifier.height);
-        this.ctx.lineTo(classifier.width - NOTE_SIZE, classifier.height);
-        this.ctx.lineTo(classifier.width, classifier.height - NOTE_SIZE);
-        this.ctx.lineTo(classifier.width, 0);
+        this.ctx.lineTo(0, h);
+        this.ctx.lineTo(w - NOTE_SIZE, h);
+        this.ctx.lineTo(w, h - NOTE_SIZE);
+        this.ctx.lineTo(w, 0);
         this.ctx.closePath();
 
-        this.ctx.moveTo(classifier.width - NOTE_SIZE, classifier.height);
-        this.ctx.lineTo(classifier.width, classifier.height - NOTE_SIZE);
-        this.ctx.lineTo(classifier.width - NOTE_SIZE, classifier.height - NOTE_SIZE);
+        this.ctx.moveTo(w - NOTE_SIZE, h);
+        this.ctx.lineTo(w, h - NOTE_SIZE);
+        this.ctx.lineTo(w - NOTE_SIZE, h - NOTE_SIZE);
         this.ctx.closePath();
         return;
       case Shape.BOX:
         const BOX_DEPTH = 20;
-        this.ctx.rect(0, 0, classifier.width, classifier.height);
+        this.ctx.rect(0, 0, w, h);
 
         this.ctx.moveTo(0, 0);
-        this.ctx.lineTo(classifier.width, 0);
-        this.ctx.lineTo(classifier.width + BOX_DEPTH, -BOX_DEPTH);
+        this.ctx.lineTo(w, 0);
+        this.ctx.lineTo(w + BOX_DEPTH, -BOX_DEPTH);
         this.ctx.lineTo(BOX_DEPTH, -BOX_DEPTH);
         this.ctx.closePath();
 
-        this.ctx.moveTo(classifier.width, 0);
-        this.ctx.lineTo(classifier.width, classifier.height);
-        this.ctx.lineTo(classifier.width + BOX_DEPTH, classifier.height - BOX_DEPTH);
-        this.ctx.lineTo(classifier.width + BOX_DEPTH, -BOX_DEPTH);
+        this.ctx.moveTo(w, 0);
+        this.ctx.lineTo(w, h);
+        this.ctx.lineTo(w + BOX_DEPTH, h - BOX_DEPTH);
+        this.ctx.lineTo(w + BOX_DEPTH, -BOX_DEPTH);
         this.ctx.closePath();
 
         return;
@@ -143,9 +128,9 @@ class CanvasRenderer implements Renderer {
         const FILE_SIZE = 30;
         this.ctx.moveTo(FILE_SIZE, 0);
         this.ctx.lineTo(0, FILE_SIZE);
-        this.ctx.lineTo(0, classifier.height);
-        this.ctx.lineTo(classifier.width, classifier.height);
-        this.ctx.lineTo(classifier.width, 0);
+        this.ctx.lineTo(0, h);
+        this.ctx.lineTo(w, h);
+        this.ctx.lineTo(w, 0);
         this.ctx.closePath();
 
         this.ctx.moveTo(FILE_SIZE, 0);
@@ -156,7 +141,7 @@ class CanvasRenderer implements Renderer {
       case Shape.COMPONENT:
         const COMPONENT_WIDTH = 40;
         const COMPONENT_HEIGHT = 20;
-        const COMPONENT_Y = (classifier.height - COMPONENT_HEIGHT * 3) / 2;
+        const COMPONENT_Y = (h - COMPONENT_HEIGHT * 3) / 2;
 
         this.ctx.moveTo(0, 0);
         this.ctx.lineTo(0, COMPONENT_Y);
@@ -167,9 +152,9 @@ class CanvasRenderer implements Renderer {
         this.ctx.lineTo(COMPONENT_WIDTH / 2, COMPONENT_Y + COMPONENT_HEIGHT * 2);
         this.ctx.lineTo(COMPONENT_WIDTH / 2, COMPONENT_Y + COMPONENT_HEIGHT * 3);
         this.ctx.lineTo(0, COMPONENT_Y + COMPONENT_HEIGHT * 3);
-        this.ctx.lineTo(0, classifier.height);
-        this.ctx.lineTo(classifier.width, classifier.height);
-        this.ctx.lineTo(classifier.width, 0);
+        this.ctx.lineTo(0, h);
+        this.ctx.lineTo(w, h);
+        this.ctx.lineTo(w, 0);
         this.ctx.closePath();
 
         this.ctx.rect(COMPONENT_WIDTH / -2, COMPONENT_Y, COMPONENT_WIDTH, COMPONENT_HEIGHT);
@@ -346,17 +331,25 @@ class CanvasRenderer implements Renderer {
     this.ctx.stroke();
   }
 
-  private renderClassifierHandles(classifier: Classifier): void {
+  private renderHandles(diagram: Diagram): void {
     this.ctx.save();
     this.ctx.fillStyle = "white";
     this.ctx.strokeStyle = "black";
     this.ctx.lineWidth = 1;
 
-    for (const { x, y } of this.getClassifierHandles(classifier)) {
+    for (const { x, y } of this.getHandles(diagram)) {
       this.renderHandleAtPoint(x, y);
     }
 
     this.ctx.restore();
+  }
+
+  private *getHandles(diagram: Diagram): Generator<Handle> {
+    for (const child of diagram.getChildren()) {
+      if (child instanceof Classifier && child.isSelected()) {
+        yield* this.getClassifierHandles(child);
+      }
+    }
   }
 
   private renderHandleAtPoint(x: number, y: number): void {
@@ -366,17 +359,13 @@ class CanvasRenderer implements Renderer {
     this.ctx.stroke();
   }
 
-  getCursorForPoint(diagram: Diagram, x: number, y: number): string {
-    for (const child of diagram.getChildren()) {
-      if (child instanceof Classifier && child.isSelected()) {
-        for (const handle of this.getClassifierHandles(child)) {
-          if (this.isPointInHandle(handle, x, y)) {
-            return `${Anchor[handle.anchor].toLowerCase()}-resize`;
-          }
-        }
+  findHandleForPoint(diagram: Diagram, x: number, y: number): Handle | undefined {
+    for (const handle of this.getHandles(diagram)) {
+      if (this.isPointInHandle(handle, x, y)) {
+        return handle;
       }
     }
-    return "default";
+    return undefined;
   }
 
   private isPointInHandle(handle: Handle, x: number, y: number): boolean {
@@ -389,14 +378,14 @@ class CanvasRenderer implements Renderer {
     const y1 = classifier.getTop();
     const y2 = classifier.getBottom();
 
-    yield { x: x1, y: y1, anchor: Anchor.NW };
-    yield { x: classifier.getCenterX(), y: y1, anchor: Anchor.N };
-    yield { x: x2, y: y1, anchor: Anchor.NE };
-    yield { x: x1, y: classifier.getCenterY(), anchor: Anchor.W };
-    yield { x: x2, y: classifier.getCenterY(), anchor: Anchor.E };
-    yield { x: x1, y: y2, anchor: Anchor.SW };
-    yield { x: classifier.getCenterX(), y: y2, anchor: Anchor.S };
-    yield { x: x2, y: y2, anchor: Anchor.SE };
+    yield new Handle(x1, y1, Anchor.NW);
+    yield new Handle(classifier.getCenterX(), y1, Anchor.N);
+    yield new Handle(x2, y1, Anchor.NE);
+    yield new Handle(x1, classifier.getCenterY(), Anchor.W);
+    yield new Handle(x2, classifier.getCenterY(), Anchor.E);
+    yield new Handle(x1, y2, Anchor.SW);
+    yield new Handle(classifier.getCenterX(), y2, Anchor.S);
+    yield new Handle(x2, y2, Anchor.SE);
   }
 }
 

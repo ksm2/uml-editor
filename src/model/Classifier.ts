@@ -1,15 +1,16 @@
 import { qcos, qsin } from "../renderer/anchors";
 import AbstractElement from "./AbstractElement";
 import Anchor from "./Anchor";
+import Rectangle from "./Rectangle";
 import Renderer from "./Renderer";
 import Shape from "./Shape";
 
 class Classifier extends AbstractElement {
-  anchor: Anchor;
+  private readonly anchor: Anchor;
   x: number;
   y: number;
-  width: number;
-  height: number;
+  private width: number;
+  private height: number;
   shape: Shape = Shape.RECTANGLE;
 
   constructor(anchor: Anchor, x: number, y: number, width: number, height: number) {
@@ -21,8 +22,45 @@ class Classifier extends AbstractElement {
     this.height = height;
   }
 
+  getRectangle(): Rectangle {
+    return {
+      x: this.getLeft(),
+      y: this.getTop(),
+      width: this.width,
+      height: this.height,
+    };
+  }
+
+  getWidth(): number {
+    return this.width;
+  }
+
+  setWidth(width: number): void {
+    this.width = width;
+  }
+
+  getX(): number {
+    return this.x;
+  }
+
+  getY(): number {
+    return this.y;
+  }
+
+  getHeight(): number {
+    return this.height;
+  }
+
+  setHeight(height: number): void {
+    this.height = height;
+  }
+
   getLeft(): number {
     return this.x - this.width * qsin(this.anchor);
+  }
+
+  setLeft(left: number): void {
+    this.x = left + this.width * qsin(this.anchor);
   }
 
   getCenterX(): number {
@@ -35,6 +73,10 @@ class Classifier extends AbstractElement {
 
   getTop(): number {
     return this.y - this.height * qcos(this.anchor);
+  }
+
+  setTop(top: number): void {
+    this.y = top + this.height * qcos(this.anchor);
   }
 
   getCenterY(): number {

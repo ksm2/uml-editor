@@ -39,8 +39,7 @@ class Serializer {
     if (this.hasElement(element)) {
       const xmlElement = this.getElement(element)!;
       if (element instanceof Classifier) {
-        xmlElement.setAttribute("x", String(element.x));
-        xmlElement.setAttribute("y", String(element.y));
+        this.setClassifier(xmlElement, element);
       }
     }
   }
@@ -96,6 +95,13 @@ class Serializer {
     classifier.shape = this.parseEnumAttribute(Model.Shape, element, "shape", classifier.shape);
     this.parseChildren(element, classifier);
     return classifier;
+  }
+
+  protected setClassifier(element: Element, classifier: Classifier): void {
+    this.setIntAttribute(element, "x", 0, classifier.getX());
+    this.setIntAttribute(element, "y", 0, classifier.getY());
+    this.setIntAttribute(element, "width", 200, classifier.getWidth());
+    this.setIntAttribute(element, "height", 120, classifier.getHeight());
   }
 
   protected parseRelationship<R extends Model.Relationship>(
@@ -198,6 +204,19 @@ class Serializer {
     }
 
     return fallback;
+  }
+
+  private setIntAttribute(
+    element: Element,
+    attribute: string,
+    fallback: number,
+    value: number,
+  ): void {
+    if (value !== fallback) {
+      element.setAttribute(attribute, String(value));
+    } else {
+      element.removeAttribute(attribute);
+    }
   }
 
   private hasElement(element: Model.Element): boolean {

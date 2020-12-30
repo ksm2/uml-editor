@@ -8,17 +8,6 @@ class Diagram extends AbstractElement {
     renderer.renderDiagram(this);
   }
 
-  forEach(consumer: Consumer<Element>): void {
-    this.forEachElement(this, consumer);
-  }
-
-  private forEachElement(root: Element, consumer: Consumer<Element>): void {
-    for (const child of root.getChildren()) {
-      consumer(child);
-      this.forEachElement(child, consumer);
-    }
-  }
-
   find(predicate: Predicate<Element>): Element | undefined {
     return this.findElement(this, predicate);
   }

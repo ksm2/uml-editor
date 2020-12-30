@@ -1,6 +1,6 @@
 import { MouseEvent, MutableRefObject, useEffect, useRef } from "react";
-import { Classifier, Diagram, Element } from "../../model";
-import { CanvasRenderer } from "../../renderer";
+import { Anchor, Classifier, Diagram, Element, Rectangle } from "../../model";
+import { CanvasRenderer, Handle } from "../../renderer";
 import { Coordinates, getMouseCoordinates, roundCoordsBy, subtractCoords } from "../../utils";
 
 interface Props {
@@ -11,8 +11,11 @@ interface Props {
 function Canvas({ diagram, onChange }: Props) {
   const div = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
-  const mouseDownCoords = useRef<Coordinates>(null) as MutableRefObject<Coordinates>;
-  const mouseDownPosition = useRef<Coordinates>(null) as MutableRefObject<Coordinates>;
+  const mouseDownCoords = useRef<Coordinates>(null) as MutableRefObject<Coordinates | null>;
+  const mouseDownRectangle = useRef<Rectangle>(null) as MutableRefObject<Rectangle | null>;
+  const mouseDownObject = useRef<Handle | Element>(null) as MutableRefObject<
+    Handle | Element | null
+  >;
 
   useEffect(() => {
     const renderer = new CanvasRenderer(canvas.current!);
@@ -36,52 +39,123 @@ function Canvas({ diagram, onChange }: Props) {
     };
   }, [diagram]);
 
+  function setCursor(cursor: string): void {
+    canvas.current!.style.cursor = cursor;
+  }
+
+  function handleHandleUpdate(target: Classifier, handle: Handle, deltaX: number, deltaY: number) {
+    if (handle.anchor === Anchor.W || handle.anchor === Anchor.NW || handle.anchor === Anchor.SW) {
+      target.setWidth(mouseDownRectangle.current!.width - deltaX);
+      target.setLeft(mouseDownRectangle.current!.x + deltaX);
+      onChange?.(target);
+    }
+    if (handle.anchor === Anchor.E || handle.anchor === Anchor.NE || handle.anchor === Anchor.SE) {
+      target.setWidth(mouseDownRectangle.current!.width + deltaX);
+      target.setLeft(mouseDownRectangle.current!.x);
+      onChange?.(target);
+    }
+    if (handle.anchor === Anchor.N || handle.anchor === Anchor.NW || handle.anchor === Anchor.NE) {
+      target.setHeight(mouseDownRectangle.current!.height - deltaY);
+      target.setTop(mouseDownRectangle.current!.y + deltaY);
+      onChange?.(target);
+    }
+    if (handle.anchor === Anchor.S || handle.anchor === Anchor.SW || handle.anchor === Anchor.SE) {
+      target.setHeight(mouseDownRectangle.current!.height + deltaY);
+      target.setTop(mouseDownRectangle.current!.y);
+      onChange?.(target);
+    }
+  }
+
+  function handleLeftMouseButtonMove(x: number, y: number) {
+    const target = diagram.find((el) => el.isSelected());
+    if (target instanceof Classifier) {
+      const { x: deltaX, y: deltaY } = roundCoordsBy(
+        subtractCoords({ x, y }, mouseDownCoords.current!),
+        20,
+      );
+      if (mouseDownObject.current === target) {
+        target.setLeft(mouseDownRectangle.current!.x + deltaX);
+        target.setTop(mouseDownRectangle.current!.y + deltaY);
+        onChange?.(target);
+        return;
+      }
+      if (mouseDownObject.current instanceof Handle) {
+        handleHandleUpdate(target, mouseDownObject.current, deltaX, deltaY);
+      }
+    }
+  }
+
   function handleMouseMove(event: MouseEvent<HTMLCanvasElement>) {
     const renderer = new CanvasRenderer(canvas.current!);
     const { x, y } = getMouseCoordinates(event);
 
     if (event.buttons & 1) {
-      const selectedElement = diagram.find((el) => el.isSelected());
-      if (selectedElement instanceof Classifier) {
-        const { x: deltaX, y: deltaY } = roundCoordsBy(
-          subtractCoords({ x, y }, mouseDownCoords.current!),
-          20,
-        );
-        selectedElement.x = mouseDownPosition.current!.x + deltaX;
-        selectedElement.y = mouseDownPosition.current!.y + deltaY;
-        onChange?.(selectedElement);
+      handleLeftMouseButtonMove(x, y);
+      renderer.renderDiagram(diagram);
+      return;
+    }
+
+    for (const element of diagram) {
+      element.setHovered(false);
+    }
+
+    const handle = renderer.findHandleForPoint(diagram, x, y);
+    if (handle !== undefined) {
+      setCursor(`${Anchor[handle.anchor].toLowerCase()}-resize`);
+    } else {
+      setCursor("default");
+
+      for (const classifier of diagram) {
+        if (classifier instanceof Classifier) {
+          const isInClassifier = renderer.isPointInClassifier(classifier, x, y);
+          if (isInClassifier) {
+            classifier.setHovered(true);
+            break;
+          }
+        }
       }
     }
 
-    diagram.forEach((classifier) => {
+    renderer.renderDiagram(diagram);
+  }
+
+  function renderMouseDown(renderer: CanvasRenderer, x: number, y: number) {
+    const selectedElement = diagram.find((el) => el.isSelected());
+    const handle = renderer.findHandleForPoint(diagram, x, y);
+    if (handle !== undefined && selectedElement instanceof Classifier) {
+      mouseDownRectangle.current = selectedElement.getRectangle();
+      mouseDownCoords.current = { x, y };
+      mouseDownObject.current = handle;
+      return;
+    }
+
+    selectedElement?.setSelected(false);
+    for (const classifier of diagram) {
       if (classifier instanceof Classifier) {
         const isInClassifier = renderer.isPointInClassifier(classifier, x, y);
-        classifier.setHovered(isInClassifier);
+        if (isInClassifier) {
+          classifier.setSelected(true);
+          mouseDownRectangle.current = classifier.getRectangle();
+          mouseDownCoords.current = { x, y };
+          mouseDownObject.current = classifier;
+          return;
+        }
       }
-    });
-
-    canvas.current!.style.cursor = renderer.getCursorForPoint(diagram, x, y);
-
-    renderer.renderDiagram(diagram);
+    }
   }
 
   function handleMouseDown(event: MouseEvent<HTMLCanvasElement>) {
     const renderer = new CanvasRenderer(canvas.current!);
     const { x, y } = getMouseCoordinates(event);
 
-    diagram.forEach((classifier) => {
-      if (classifier instanceof Classifier) {
-        const isInClassifier = renderer.isPointInClassifier(classifier, x, y);
-        classifier.setSelected(isInClassifier);
-        if (isInClassifier) {
-          mouseDownPosition.current = { x: classifier.x, y: classifier.y };
-        }
-      }
-    });
-
-    mouseDownCoords.current = { x, y };
-
+    renderMouseDown(renderer, x, y);
     renderer.renderDiagram(diagram);
+  }
+
+  function handleMouseUp() {
+    mouseDownRectangle.current = null;
+    mouseDownCoords.current = null;
+    mouseDownObject.current = null;
   }
 
   return (
@@ -93,7 +167,12 @@ function Canvas({ diagram, onChange }: Props) {
         gridArea: "canvas",
       }}
     >
-      <canvas ref={canvas} onMouseMove={handleMouseMove} onMouseDown={handleMouseDown} />
+      <canvas
+        ref={canvas}
+        onMouseMove={handleMouseMove}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+      />
     </div>
   );
 }

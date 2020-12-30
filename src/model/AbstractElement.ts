@@ -21,6 +21,13 @@ abstract class AbstractElement implements Element {
     return this.children.delete(child);
   }
 
+  *[Symbol.iterator](): Iterator<Element> {
+    for (const child of [...this.children].reverse()) {
+      yield* child;
+    }
+    yield this;
+  }
+
   isHovered(): boolean {
     return this.hovered;
   }
