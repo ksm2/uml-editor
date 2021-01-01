@@ -13,6 +13,7 @@ import {
   Title,
 } from "../model";
 import CanvasClassifierRenderer from "./CanvasClassifierRenderer";
+import CanvasOptions from "./CanvasOptions";
 import { HANDLE_RADIUS, PADDING } from "./constants";
 import Handle from "./Handle";
 import RenderContext from "./RenderContext";
@@ -21,9 +22,13 @@ class CanvasRenderer implements Renderer {
   private readonly context: RenderContext;
   private readonly canvas: CanvasRenderingContext2D;
   private readonly classifierRenderer: CanvasClassifierRenderer;
+  private readonly translateX: number;
+  private readonly translateY: number;
 
-  constructor(canvas: HTMLCanvasElement, style: Style) {
+  constructor(canvas: HTMLCanvasElement, style: Style, options: CanvasOptions) {
     this.context = new RenderContext(canvas.width, canvas.height, style);
+    this.translateX = options.translateX;
+    this.translateY = options.translateY;
     this.canvas = canvas.getContext("2d")!;
     this.classifierRenderer = new CanvasClassifierRenderer(this, this.context, this.canvas);
   }
@@ -31,7 +36,7 @@ class CanvasRenderer implements Renderer {
   renderDiagram(diagram: Diagram): void {
     this.canvas.clearRect(0, 0, this.context.getWidth(), this.context.getHeight());
     this.canvas.save();
-    this.canvas.translate(this.context.getWidth() / 2, this.context.getHeight() / 2);
+    this.canvas.translate(this.translateX, this.translateY);
     for (const child of diagram.getChildren()) {
       child.render(this);
     }

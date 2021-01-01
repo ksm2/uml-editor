@@ -1,22 +1,25 @@
+import classNames from "classnames";
 import { ReactNode } from "react";
-import ContainerFluid from "./ContainerFluid";
-import logo from "./logo.png";
+import { useId } from "../../hooks";
+import DropdownMenu from "./DropdownMenu";
+import DropdownToggle from "./DropdownToggle";
 
 interface Props {
+  active?: boolean;
+  title: string;
   children?: ReactNode;
 }
 
-function Menu({ children }: Props) {
+function Menu({ active = false, title, children }: Props) {
+  const id = useId("Menu");
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark" style={{ gridArea: "menu" }}>
-      <ContainerFluid>
-        <span className="navbar-brand">
-          <img alt="Logo" src={logo} height={32} width={32} className="d-inline-block align-top" />{" "}
-          UML Editor
-        </span>
-        <ul className="navbar-nav me-auto">{children}</ul>
-      </ContainerFluid>
-    </nav>
+    <li className="nav-item dropdown">
+      <DropdownToggle id={id} className={classNames("nav-link", { active })}>
+        {title}
+      </DropdownToggle>
+      <DropdownMenu labelledBy={id}>{children}</DropdownMenu>
+    </li>
   );
 }
 

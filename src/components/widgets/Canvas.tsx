@@ -10,6 +10,13 @@ interface Props {
   onChange?: (element: Element) => void;
 }
 
+function createRenderer(canvas: HTMLCanvasElement, style: Style): CanvasRenderer {
+  return new CanvasRenderer(canvas, style, {
+    translateX: canvas.width / 2,
+    translateY: canvas.height / 2,
+  });
+}
+
 function Canvas({ diagram, style, onChange }: Props) {
   const div = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -25,7 +32,7 @@ function Canvas({ diagram, style, onChange }: Props) {
       canvas.current!.width = Math.trunc(rect.width);
       canvas.current!.height = Math.trunc(rect.height);
 
-      const renderer = new CanvasRenderer(canvas.current!, style);
+      const renderer = createRenderer(canvas.current!, style);
       renderer.renderDiagram(diagram);
     }
 
@@ -83,7 +90,7 @@ function Canvas({ diagram, style, onChange }: Props) {
   }
 
   function handleMouseMove(event: MouseEvent<HTMLCanvasElement>) {
-    const renderer = new CanvasRenderer(canvas.current!, style);
+    const renderer = createRenderer(canvas.current!, style);
     const { x, y } = getMouseCoordinates(event);
 
     if (event.buttons & 1) {
@@ -142,7 +149,7 @@ function Canvas({ diagram, style, onChange }: Props) {
   }
 
   function handleMouseDown(event: MouseEvent<HTMLCanvasElement>) {
-    const renderer = new CanvasRenderer(canvas.current!, style);
+    const renderer = createRenderer(canvas.current!, style);
     const { x, y } = getMouseCoordinates(event);
 
     renderMouseDown(renderer, x, y);

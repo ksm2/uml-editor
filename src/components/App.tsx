@@ -69,7 +69,7 @@ Class {
 
   return (
     <div className="App bg-secondary">
-      <AppMenu />
+      <AppMenu diagram={diagram} style={style} />
       <XMLEditor xml={xml} onChange={handleXmlChange} />
       <CSSEditor css={css} onChange={handleCssChange} />
       <Canvas diagram={diagram} style={style} onChange={handleCanvasChange} />
