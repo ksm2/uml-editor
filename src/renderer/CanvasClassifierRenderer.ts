@@ -1,6 +1,6 @@
 import { Color } from "../css";
 import { Classifier, ClassifierRenderer, Renderer, Shape } from "../model";
-import { PADDING } from "./constants";
+import { PADDING } from "../constants";
 import RenderContext from "./RenderContext";
 
 class CanvasClassifierRenderer implements ClassifierRenderer {

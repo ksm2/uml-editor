@@ -1,6 +1,7 @@
 import { Dispatch } from "react";
 import { File, SerializableFile } from "../../utils";
 import { DropdownDivider, Menu, MenuBar } from "../blocks";
+import FileNew from "./FileNew";
 import FileOpen from "./FileOpen";
 import FileRename from "./FileRename";
 import FileSave from "./FileSave";
@@ -15,6 +16,8 @@ function AppMenu({ file, onFileChange }: Props) {
   return (
     <MenuBar>
       <Menu title="File">
+        <FileNew onFileChange={onFileChange} />
+        <DropdownDivider />
         <FileOpen onFileChange={onFileChange} />
         <FileSave file={file} />
         <DropdownDivider />

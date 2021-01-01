@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { INITIAL_CSS, INITIAL_XML } from "../constants";
 import { parser, Style } from "../css";
 import { useDocumentTitle } from "../hooks";
 import { Diagram, Element } from "../model";
@@ -45,43 +46,12 @@ function App() {
   }
 
   useEffect(() => {
-    const initialXml = `\
-<Diagram>
-  <Interface id="i1" anchor="s" x="0" y="-50">
-    <Stereotype/>
-    <Title>Visitor</Title>
-  </Interface>
-
-  <Class id="c1" anchor="n" x="0" y="50" width="400">
-    <Stereotype/>
-    <Title>Concrete Visitor</Title>
-    <Separator/>
-    <Method>visitSomething(something: Something)</Method>
-  </Class>
-
-  <Implementation from="c1" to="i1" fromAnchor="n" toAnchor="s"/>
-</Diagram>
-`;
-    const initialCss = `\
-Interface {
-  Title {
-    font-style: italic;
-  }
-}
-
-Class {
-  Title {
-    font-weight: bold;
-  }
-}
-`;
-
-    const diagram = serializer.deserialize(initialXml);
-    const style = parser.parseFromString(initialCss);
+    const diagram = serializer.deserialize(INITIAL_XML);
+    const style = parser.parseFromString(INITIAL_CSS);
     setDiagram(diagram);
     setStyle(style);
-    setXml(initialXml);
-    setCss(initialCss);
+    setXml(INITIAL_XML);
+    setCss(INITIAL_CSS);
   }, []);
 
   return (

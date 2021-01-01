@@ -14,7 +14,7 @@ import {
 } from "../model";
 import CanvasClassifierRenderer from "./CanvasClassifierRenderer";
 import CanvasOptions from "./CanvasOptions";
-import { HANDLE_RADIUS, PADDING } from "./constants";
+import { HANDLE_RADIUS, PADDING } from "../constants";
 import Handle from "./Handle";
 import RenderContext from "./RenderContext";
 
