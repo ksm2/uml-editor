@@ -16,6 +16,7 @@ class Style {
       if (rule.selector.tag === head) {
         const properties = new PropertyMap(rule.properties);
         if (hasTail) {
+          properties.addAll(this.getProperties(tail));
           properties.addAll(rule.getProperties(tail));
         }
         result.addAll(properties);
