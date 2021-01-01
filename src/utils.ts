@@ -26,6 +26,10 @@ export interface File extends SerializableFile {
   style: Style;
 }
 
+export interface ViewOptions {
+  grid: boolean;
+}
+
 export function getMouseCoordinates(event: MouseEvent<HTMLCanvasElement>): Coordinates {
   const { clientX, clientY } = event;
   const boundingClientRect = event.currentTarget.getBoundingClientRect();

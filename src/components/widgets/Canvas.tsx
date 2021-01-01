@@ -1,10 +1,18 @@
 import { MouseEvent, MutableRefObject, useEffect, useRef } from "react";
+import { GRID } from "../../constants";
 import { Style } from "../../css";
 import { Anchor, Classifier, Diagram, Element, Rectangle } from "../../model";
 import { CanvasRenderer, Handle } from "../../renderer";
-import { Coordinates, getMouseCoordinates, roundCoordsBy, subtractCoords } from "../../utils";
+import {
+  Coordinates,
+  getMouseCoordinates,
+  roundCoordsBy,
+  subtractCoords,
+  ViewOptions,
+} from "../../utils";
 
 interface Props {
+  viewOptions: ViewOptions;
   diagram: Diagram;
   style: Style;
   onChange?: (element: Element) => void;
@@ -17,7 +25,8 @@ function createRenderer(canvas: HTMLCanvasElement, style: Style): CanvasRenderer
   });
 }
 
-function Canvas({ diagram, style, onChange }: Props) {
+function Canvas({ viewOptions, diagram, style, onChange }: Props) {
+  const options = useRef(viewOptions);
   const div = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const mouseDownCoords = useRef<Coordinates>(null) as MutableRefObject<Coordinates | null>;
@@ -27,12 +36,20 @@ function Canvas({ diagram, style, onChange }: Props) {
   >;
 
   useEffect(() => {
+    options.current = viewOptions;
+  });
+
+  useEffect(() => {
     function onResize() {
       const rect = div.current!.getBoundingClientRect();
       canvas.current!.width = Math.trunc(rect.width);
       canvas.current!.height = Math.trunc(rect.height);
 
       const renderer = createRenderer(canvas.current!, style);
+      renderer.clear();
+      if (options.current.grid) {
+        renderer.renderGrid();
+      }
       renderer.renderDiagram(diagram);
     }
 
@@ -41,7 +58,7 @@ function Canvas({ diagram, style, onChange }: Props) {
     return () => {
       window.removeEventListener("resize", onResize);
     };
-  }, [diagram, style]);
+  }, [viewOptions, diagram, style]);
 
   function setCursor(cursor: string): void {
     canvas.current!.style.cursor = cursor;
@@ -75,7 +92,7 @@ function Canvas({ diagram, style, onChange }: Props) {
     if (target instanceof Classifier) {
       const { x: deltaX, y: deltaY } = roundCoordsBy(
         subtractCoords({ x, y }, mouseDownCoords.current!),
-        20,
+        GRID,
       );
       if (mouseDownObject.current === target) {
         target.setLeft(mouseDownRectangle.current!.x + deltaX);
@@ -95,6 +112,10 @@ function Canvas({ diagram, style, onChange }: Props) {
 
     if (event.buttons & 1) {
       handleLeftMouseButtonMove(x, y);
+      renderer.clear();
+      if (options.current.grid) {
+        renderer.renderGrid();
+      }
       renderer.renderDiagram(diagram);
       return;
     }
@@ -120,6 +141,10 @@ function Canvas({ diagram, style, onChange }: Props) {
       }
     }
 
+    renderer.clear();
+    if (options.current.grid) {
+      renderer.renderGrid();
+    }
     renderer.renderDiagram(diagram);
   }
 
@@ -153,6 +178,10 @@ function Canvas({ diagram, style, onChange }: Props) {
     const { x, y } = getMouseCoordinates(event);
 
     renderMouseDown(renderer, x, y);
+    renderer.clear();
+    if (options.current.grid) {
+      renderer.renderGrid();
+    }
     renderer.renderDiagram(diagram);
   }
 

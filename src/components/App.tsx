@@ -4,11 +4,12 @@ import { parser, Style } from "../css";
 import { useDocumentTitle } from "../hooks";
 import { Diagram, Element } from "../model";
 import { serializer } from "../serializer";
-import { SerializableFile } from "../utils";
+import { ViewOptions, SerializableFile } from "../utils";
 import { AppMenu, Canvas, CSSEditor, XMLEditor } from "./widgets";
 import "./App.css";
 
 function App() {
+  const [viewOptions, setViewOptions] = useState<ViewOptions>({ grid: false });
   const [diagram, setDiagram] = useState(() => new Diagram());
   const [style, setStyle] = useState(() => new Style());
   const [title, setTitle] = useState("Untitled");
@@ -56,10 +57,20 @@ function App() {
 
   return (
     <div className="App bg-secondary">
-      <AppMenu file={{ title, model: diagram, style, xml, css }} onFileChange={handleFileChange} />
+      <AppMenu
+        file={{ title, model: diagram, style, xml, css }}
+        viewOptions={viewOptions}
+        onFileChange={handleFileChange}
+        onViewOptionsChange={setViewOptions}
+      />
       <XMLEditor xml={xml} onChange={handleXmlChange} />
       <CSSEditor css={css} onChange={handleCssChange} />
-      <Canvas diagram={diagram} style={style} onChange={handleCanvasChange} />
+      <Canvas
+        viewOptions={viewOptions}
+        diagram={diagram}
+        style={style}
+        onChange={handleCanvasChange}
+      />
     </div>
   );
 }

@@ -14,7 +14,7 @@ import {
 } from "../model";
 import CanvasClassifierRenderer from "./CanvasClassifierRenderer";
 import CanvasOptions from "./CanvasOptions";
-import { HANDLE_RADIUS, PADDING } from "../constants";
+import { GRID, HANDLE_RADIUS, PADDING } from "../constants";
 import Handle from "./Handle";
 import RenderContext from "./RenderContext";
 
@@ -33,8 +33,33 @@ class CanvasRenderer implements Renderer {
     this.classifierRenderer = new CanvasClassifierRenderer(this, this.context, this.canvas);
   }
 
-  renderDiagram(diagram: Diagram): void {
+  clear(): void {
     this.canvas.clearRect(0, 0, this.context.getWidth(), this.context.getHeight());
+  }
+
+  renderGrid(): void {
+    const minX = -Math.floor(this.translateX / GRID) * GRID;
+    const maxX = Math.floor(this.context.getWidth() - this.translateX / GRID) * GRID;
+    const minY = -Math.floor(this.translateY / GRID) * GRID;
+    const maxY = Math.floor(this.context.getHeight() - this.translateY / GRID) * GRID;
+
+    this.canvas.save();
+    this.canvas.translate(this.translateX, this.translateY);
+    this.canvas.beginPath();
+    this.canvas.strokeStyle = "#00000033";
+    for (let x = minX; x < maxX; x += GRID) {
+      this.canvas.moveTo(x, -this.translateY);
+      this.canvas.lineTo(x, this.context.getHeight() - this.translateY);
+    }
+    for (let y = minY; y < maxY; y += GRID) {
+      this.canvas.moveTo(-this.translateX, y);
+      this.canvas.lineTo(this.context.getWidth() - this.translateX, y);
+    }
+    this.canvas.stroke();
+    this.canvas.restore();
+  }
+
+  renderDiagram(diagram: Diagram): void {
     this.canvas.save();
     this.canvas.translate(this.translateX, this.translateY);
     for (const child of diagram.getChildren()) {
