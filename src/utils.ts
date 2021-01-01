@@ -15,10 +15,14 @@ export interface Predicate<T> {
   (item: T): boolean;
 }
 
-export interface File {
+export interface SerializableFile {
   title: string;
-  model: Diagram;
+  xml: string;
   css: string;
+}
+
+export interface File extends SerializableFile {
+  model: Diagram;
   style: Style;
 }
 
@@ -54,4 +58,25 @@ export function downloadFile(filename: string, dataURL: string): void {
   downloadLink.download = filename;
   downloadLink.href = dataURL;
   downloadLink.click();
+}
+
+export function uploadFile(pattern: string): Promise<string> {
+  return new Promise<string>((resolve) => {
+    const uploadInput = document.createElement("input");
+
+    uploadInput.addEventListener(
+      "change",
+      () => {
+        if (uploadInput.files!.length > 0) {
+          resolve(uploadInput.files!.item(0)!.text());
+        }
+      },
+      { once: true },
+    );
+
+    uploadInput.type = "file";
+    uploadInput.accept = pattern;
+    uploadInput.multiple = false;
+    uploadInput.click();
+  });
 }

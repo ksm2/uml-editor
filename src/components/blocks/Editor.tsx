@@ -82,7 +82,9 @@ function Editor({ language, value, schema, onChange }: Props) {
   }, [language, schema]);
 
   useEffect(() => {
-    editor.current!.setValue(value);
+    if (editor.current!.getValue() !== value) {
+      editor.current!.setValue(value);
+    }
 
     function handleChange() {
       const newValue = editor.current!.getValue();
