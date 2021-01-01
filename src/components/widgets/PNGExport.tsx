@@ -1,3 +1,4 @@
+import { FormattedMessage } from "react-intl";
 import { CanvasRenderer } from "../../renderer";
 import { downloadFile, File, sanitizeFilename } from "../../utils";
 import { DropdownItem, Icon } from "../blocks";
@@ -26,7 +27,7 @@ function PNGExport({ file }: Props) {
 
   return (
     <DropdownItem onClick={handleClick} shortcut="Ctrl-E">
-      <Icon name="image" /> As PNG
+      <Icon name="image" /> <FormattedMessage id="export.png" defaultMessage="As PNG ..." />
     </DropdownItem>
   );
 }

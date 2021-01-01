@@ -1,0 +1,50 @@
+{
+  "export": {
+    "defaultMessage": "Export"
+  },
+  "export.png": {
+    "defaultMessage": "As PNG ..."
+  },
+  "file": {
+    "defaultMessage": "File"
+  },
+  "file.new": {
+    "defaultMessage": "New ..."
+  },
+  "file.new.message": {
+    "defaultMessage": "Choose a title for the new document"
+  },
+  "file.open": {
+    "defaultMessage": "Open ..."
+  },
+  "file.rename": {
+    "defaultMessage": "Rename \"{title}\" ..."
+  },
+  "file.rename.message": {
+    "defaultMessage": "New document title"
+  },
+  "file.save": {
+    "defaultMessage": "Save ..."
+  },
+  "shortcut.alt": {
+    "defaultMessage": "Alt"
+  },
+  "shortcut.ctrl": {
+    "defaultMessage": "Ctrl"
+  },
+  "shortcut.shift": {
+    "defaultMessage": "Shift"
+  },
+  "title": {
+    "defaultMessage": "UML Editor"
+  },
+  "untitled": {
+    "defaultMessage": "Untitled"
+  },
+  "view": {
+    "defaultMessage": "View"
+  },
+  "view.grid": {
+    "defaultMessage": "Toggle Grid"
+  }
+}

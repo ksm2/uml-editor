@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@formatjs/cli": "^2.13.17",
     "@popperjs/core": "^2.6.0",
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.1.0",
@@ -18,21 +19,28 @@
     "bootstrap-icons": "^1.2.2",
     "classnames": "^2.2.6",
     "codemirror": "^5.59.0",
+    "eslint-plugin-formatjs": "^2.9.12",
     "prettier": "^2.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-intl": "^5.10.10",
     "react-scripts": "4.0.1",
+    "ts-node": "^9.1.1",
     "typescript": "^4.0.3",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
+    "prebuild": "yarn run -s i18n:compile",
     "build": "react-scripts build",
     "postbuild": "echo -n uml-editor.app > build/CNAME",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prettier:write": "prettier --write './src/**/*.{css,md,ts,tsx}'",
     "prettier:check": "prettier --check './src/**/*.{css,md,ts,tsx}'",
+    "i18n:extract": "formatjs extract src/components/**/*.tsx --out-file lang/en.json",
+    "i18n:maintain": "ts-node-transpile-only --project scripts/tsconfig.json scripts/i18n-maintain.ts",
+    "i18n:compile": "formatjs compile-folder --ast lang src/i18n",
     "favicon:16": "inkscape -w 16 -h 16 -o misc/favicon16.png misc/favicon.svg",
     "favicon:24": "inkscape -w 24 -h 24 -o misc/favicon24.png misc/favicon.svg",
     "favicon:32": "inkscape -w 32 -h 32 -o misc/favicon32.png misc/favicon.svg",
@@ -43,6 +51,9 @@
     "favicon:ico": "convert misc/favicon16.png misc/favicon24.png misc/favicon32.png misc/favicon64.png public/favicon.ico"
   },
   "eslintConfig": {
+    "plugins": [
+      "formatjs"
+    ],
     "extends": [
       "react-app",
       "react-app/jest"

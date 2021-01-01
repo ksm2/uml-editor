@@ -1,14 +1,20 @@
-import { useEffect, useState } from "react";
+import React, { Dispatch, useEffect, useState } from "react";
+import { useIntl } from "react-intl";
 import { INITIAL_CSS, INITIAL_XML } from "../constants";
 import { parser, Style } from "../css";
 import { useDocumentTitle } from "../hooks";
 import { Diagram, Element } from "../model";
 import { serializer } from "../serializer";
-import { ViewOptions, SerializableFile } from "../utils";
+import { SerializableFile, ViewOptions } from "../utils";
 import { AppMenu, Canvas, CSSEditor, XMLEditor } from "./widgets";
 import "./App.css";
 
-function App() {
+interface Props {
+  onLocaleChange: Dispatch<string>;
+}
+
+function App({ onLocaleChange }: Props) {
+  const intl = useIntl();
   const [viewOptions, setViewOptions] = useState<ViewOptions>({ grid: false });
   const [diagram, setDiagram] = useState(() => new Diagram());
   const [style, setStyle] = useState(() => new Style());
@@ -16,7 +22,9 @@ function App() {
   const [xml, setXml] = useState("");
   const [css, setCss] = useState("");
 
-  useDocumentTitle(`${title} - UML Editor`);
+  useDocumentTitle(
+    `${title} - ${intl.formatMessage({ id: "title", defaultMessage: "UML Editor" })}`,
+  );
 
   function handleXmlChange(xml: string): void {
     const diagram = serializer.deserialize(xml);
@@ -62,6 +70,7 @@ function App() {
         viewOptions={viewOptions}
         onFileChange={handleFileChange}
         onViewOptionsChange={setViewOptions}
+        onLocaleChange={onLocaleChange}
       />
       <XMLEditor xml={xml} onChange={handleXmlChange} />
       <CSSEditor css={css} onChange={handleCssChange} />

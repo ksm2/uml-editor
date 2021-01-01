@@ -1,0 +1,50 @@
+{
+  "export": {
+    "defaultMessage": "Exportieren"
+  },
+  "export.png": {
+    "defaultMessage": "Als PNG ..."
+  },
+  "file": {
+    "defaultMessage": "Datei"
+  },
+  "file.new": {
+    "defaultMessage": "Neu ..."
+  },
+  "file.new.message": {
+    "defaultMessage": "Wählen Sie einen neuen Titel für das neue Dokument"
+  },
+  "file.open": {
+    "defaultMessage": "Öffnen ..."
+  },
+  "file.rename": {
+    "defaultMessage": "\"{title}\" umbenennen ..."
+  },
+  "file.rename.message": {
+    "defaultMessage": "Neuer Dokument-Titel"
+  },
+  "file.save": {
+    "defaultMessage": "Speichern ..."
+  },
+  "shortcut.alt": {
+    "defaultMessage": "Alt"
+  },
+  "shortcut.ctrl": {
+    "defaultMessage": "Strg"
+  },
+  "shortcut.shift": {
+    "defaultMessage": "Umsch"
+  },
+  "title": {
+    "defaultMessage": "UML-Editor"
+  },
+  "untitled": {
+    "defaultMessage": "Unbenannt"
+  },
+  "view": {
+    "defaultMessage": "Ansicht"
+  },
+  "view.grid": {
+    "defaultMessage": "Grid umschalten"
+  }
+}

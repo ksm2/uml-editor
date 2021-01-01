@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { MouseEvent, ReactNode } from "react";
 import { useShortcut } from "../../hooks";
+import Shortcut from "./Shortcut";
 
 interface Props {
   onClick?: () => void;
@@ -22,7 +23,7 @@ function DropdownItem({ onClick, shortcut, children }: Props) {
     <li>
       <button onClick={handleClick} className={classNames("btn", "btn-link", "dropdown-item")}>
         {children}
-        {shortcut && <span className="text-muted float-end">{shortcut.replace("-", " ")}</span>}
+        {shortcut && <Shortcut shortcut={shortcut} />}
       </button>
     </li>
   );

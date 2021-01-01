@@ -4,6 +4,7 @@ import DropdownItem from "./DropdownItem";
 import DropdownMenu from "./DropdownMenu";
 import DropdownToggle from "./DropdownToggle";
 import Editor from "./Editor";
+import Flag from "./Flag";
 import Icon from "./Icon";
 import MenuBar from "./MenuBar";
 import Menu from "./Menu";
@@ -16,6 +17,7 @@ export {
   DropdownMenu,
   DropdownToggle,
   Editor,
+  Flag,
   Icon,
   MenuBar,
   Menu,

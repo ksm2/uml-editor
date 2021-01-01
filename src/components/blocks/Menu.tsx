@@ -6,11 +6,12 @@ import DropdownToggle from "./DropdownToggle";
 
 interface Props {
   active?: boolean;
-  title: string;
+  placement?: string;
+  title: ReactNode;
   children?: ReactNode;
 }
 
-function Menu({ active = false, title, children }: Props) {
+function Menu({ active = false, placement, title, children }: Props) {
   const id = useId("Menu");
 
   return (
@@ -18,7 +19,9 @@ function Menu({ active = false, title, children }: Props) {
       <DropdownToggle id={id} className={classNames("nav-link", { active })}>
         {title}
       </DropdownToggle>
-      <DropdownMenu labelledBy={id}>{children}</DropdownMenu>
+      <DropdownMenu placement={placement} labelledBy={id}>
+        {children}
+      </DropdownMenu>
     </li>
   );
 }

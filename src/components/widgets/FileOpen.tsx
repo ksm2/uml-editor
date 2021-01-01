@@ -1,4 +1,5 @@
 import { Dispatch } from "react";
+import { FormattedMessage } from "react-intl";
 import { fileSerializer } from "../../serializer";
 import { SerializableFile, uploadFile } from "../../utils";
 import { DropdownItem, Icon } from "../blocks";
@@ -17,7 +18,7 @@ function FileOpen({ onFileChange }: Props) {
 
   return (
     <DropdownItem onClick={handleClick} shortcut="Ctrl-O">
-      <Icon name="folder" /> Open
+      <Icon name="folder" /> <FormattedMessage id="file.open" defaultMessage="Open ..." />
     </DropdownItem>
   );
 }

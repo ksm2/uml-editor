@@ -1,3 +1,4 @@
+import { FormattedMessage } from "react-intl";
 import { fileSerializer } from "../../serializer";
 import { downloadFile, File, sanitizeFilename } from "../../utils";
 import { DropdownItem, Icon } from "../blocks";
@@ -16,7 +17,7 @@ function FileSave({ file }: Props) {
 
   return (
     <DropdownItem onClick={handleClick} shortcut="Ctrl-S">
-      <Icon name="cloud-download" /> Save
+      <Icon name="cloud-download" /> <FormattedMessage id="file.save" defaultMessage="Save ..." />
     </DropdownItem>
   );
 }

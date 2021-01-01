@@ -1,4 +1,5 @@
 import { Dispatch } from "react";
+import { FormattedMessage } from "react-intl";
 import { ViewOptions } from "../../utils";
 import { DropdownItem, Icon } from "../blocks";
 
@@ -17,7 +18,7 @@ function Grid({ viewOptions, onViewOptionsChange }: Props) {
 
   return (
     <DropdownItem onClick={handleClick} shortcut="Alt-G">
-      <Icon name={icon} /> Toggle Grid
+      <Icon name={icon} /> <FormattedMessage id="view.grid" defaultMessage="Toggle Grid" />
     </DropdownItem>
   );
 }
