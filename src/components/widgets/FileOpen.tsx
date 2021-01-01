@@ -1,7 +1,7 @@
 import { Dispatch } from "react";
 import { fileSerializer } from "../../serializer";
 import { SerializableFile, uploadFile } from "../../utils";
-import { DropdownItem } from "../blocks";
+import { DropdownItem, Icon } from "../blocks";
 
 interface Props {
   onFileChange: Dispatch<SerializableFile>;
@@ -17,7 +17,7 @@ function FileOpen({ onFileChange }: Props) {
 
   return (
     <DropdownItem onClick={handleClick} shortcut="Ctrl-O">
-      Open
+      <Icon name="folder" /> Open
     </DropdownItem>
   );
 }

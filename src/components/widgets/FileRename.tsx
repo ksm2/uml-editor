@@ -1,6 +1,6 @@
 import { Dispatch } from "react";
 import { File } from "../../utils";
-import { DropdownItem } from "../blocks";
+import { DropdownItem, Icon } from "../blocks";
 
 interface Props {
   file: File;
@@ -15,7 +15,11 @@ function FileRename({ file, onTitleChange }: Props) {
     }
   }
 
-  return <DropdownItem onClick={handleClick}>Rename "{file.title}" ...</DropdownItem>;
+  return (
+    <DropdownItem onClick={handleClick}>
+      <Icon name="pencil" /> Rename "{file.title}" ...
+    </DropdownItem>
+  );
 }
 
 export default FileRename;

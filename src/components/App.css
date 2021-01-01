@@ -10,3 +10,7 @@
   flex-flow: column nowrap;
   justify-content: stretch;
 }
+
+.App .dropdown-menu {
+  min-width: 12rem;
+}

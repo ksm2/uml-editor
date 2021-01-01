@@ -1,7 +1,7 @@
 import { Dispatch } from "react";
 import { INITIAL_CSS, INITIAL_XML } from "../../constants";
 import { SerializableFile } from "../../utils";
-import { DropdownItem } from "../blocks";
+import { DropdownItem, Icon } from "../blocks";
 
 interface Props {
   onFileChange: Dispatch<SerializableFile>;
@@ -16,7 +16,11 @@ function FileNew({ onFileChange }: Props) {
     });
   }
 
-  return <DropdownItem onClick={handleClick}>New ...</DropdownItem>;
+  return (
+    <DropdownItem onClick={handleClick}>
+      <Icon name="file-earmark-plus" /> New ...
+    </DropdownItem>
+  );
 }
 
 export default FileNew;

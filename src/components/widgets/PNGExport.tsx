@@ -1,6 +1,6 @@
 import { CanvasRenderer } from "../../renderer";
 import { downloadFile, File, sanitizeFilename } from "../../utils";
-import { DropdownItem } from "../blocks";
+import { DropdownItem, Icon } from "../blocks";
 
 interface Props {
   file: File;
@@ -26,7 +26,7 @@ function PNGExport({ file }: Props) {
 
   return (
     <DropdownItem onClick={handleClick} shortcut="Ctrl-E">
-      As PNG
+      <Icon name="image" /> As PNG
     </DropdownItem>
   );
 }

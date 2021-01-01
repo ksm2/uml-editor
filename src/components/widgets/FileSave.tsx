@@ -1,6 +1,6 @@
 import { fileSerializer } from "../../serializer";
 import { downloadFile, File, sanitizeFilename } from "../../utils";
-import { DropdownItem } from "../blocks";
+import { DropdownItem, Icon } from "../blocks";
 
 interface Props {
   file: File;
@@ -16,7 +16,7 @@ function FileSave({ file }: Props) {
 
   return (
     <DropdownItem onClick={handleClick} shortcut="Ctrl-S">
-      Save
+      <Icon name="cloud-download" /> Save
     </DropdownItem>
   );
 }
