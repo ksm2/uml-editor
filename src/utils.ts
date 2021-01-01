@@ -48,3 +48,10 @@ export function roundCoordsBy(coord: Coordinates, by: number): Coordinates {
 export function sanitizeFilename(element: string): string {
   return element.replace(/[^a-zA-Z_-]+/g, "-");
 }
+
+export function downloadFile(filename: string, dataURL: string): void {
+  const downloadLink = document.createElement("a");
+  downloadLink.download = filename;
+  downloadLink.href = dataURL;
+  downloadLink.click();
+}

@@ -1,5 +1,5 @@
 import { fileSerializer } from "../../serializer";
-import { File, sanitizeFilename } from "../../utils";
+import { downloadFile, File, sanitizeFilename } from "../../utils";
 import { DropdownItem } from "../blocks";
 
 interface Props {
@@ -11,11 +11,7 @@ function FileSave({ file }: Props) {
     const content = btoa(fileSerializer.saveToString(file));
     const url = new URL(`data:text/x-uml;base64,${content}`);
 
-    const dataURL = url.toString();
-    const downloadLink = document.createElement("a");
-    downloadLink.download = `${sanitizeFilename(file.title)}.uml`;
-    downloadLink.href = dataURL;
-    downloadLink.click();
+    downloadFile(`${sanitizeFilename(file.title)}.uml`, url.toString());
   }
 
   return <DropdownItem onClick={handleClick}>Save</DropdownItem>;

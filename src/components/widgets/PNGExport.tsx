@@ -1,5 +1,5 @@
 import { CanvasRenderer } from "../../renderer";
-import { File, sanitizeFilename } from "../../utils";
+import { downloadFile, File, sanitizeFilename } from "../../utils";
 import { DropdownItem } from "../blocks";
 
 interface Props {
@@ -21,10 +21,7 @@ function PNGExport({ file }: Props) {
     renderer.renderDiagram(file.model);
 
     const dataURL = canvas.toDataURL("image/png");
-    const downloadLink = document.createElement("a");
-    downloadLink.download = `${sanitizeFilename(file.title)}.png`;
-    downloadLink.href = dataURL;
-    downloadLink.click();
+    downloadFile(`${sanitizeFilename(file.title)}.png`, dataURL);
   }
 
   return <DropdownItem onClick={handleClick}>As PNG</DropdownItem>;
