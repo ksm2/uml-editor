@@ -6,6 +6,10 @@ class CSSTokenizer extends Tokenizer<CSSToken> {
     // Whitespace
     if (this.matches(/^\s+/)) return null;
 
+    // Comments
+    if (this.matches(/^\/\/[^\r\n]*/)) return null;
+    if (this.matches(/^\/\*.*?\*\//)) return null;
+
     // Literals
     if (this.matches(/^#[0-9a-fA-F]{6}|^#[0-9a-fA-F]{3}/)) return CSSToken.COLOR;
     if (this.matches(/^\d+(\.\d*)?|^\.\d+/)) return CSSToken.NUMBER;
