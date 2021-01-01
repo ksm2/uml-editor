@@ -46,7 +46,7 @@ class CSSParser extends Parser<CSSToken, Style> {
     const key = this.parseIdentifier();
     this.consume(CSSToken.COLON);
 
-    const value = this.parseOneOf(this.parseColor, this.parseNumber, this.parseIdentifier);
+    const value = this.parseOneOf(this.parseColor, this.parseNumber, this.parseIdentifierValue);
     this.consume(CSSToken.SEMI);
 
     return new Property(key, value);
@@ -80,6 +80,56 @@ class CSSParser extends Parser<CSSToken, Style> {
   private parseNumber(): number {
     const number = this.consume(CSSToken.NUMBER);
     return parseFloat(number.value);
+  }
+
+  private parseIdentifierValue(): string | Color {
+    const identifier = this.parseIdentifier();
+    switch (identifier) {
+      case "blue":
+        return Color.BLUE;
+      case "indigo":
+        return Color.INDIGO;
+      case "purple":
+        return Color.PURPLE;
+      case "pink":
+        return Color.PINK;
+      case "red":
+        return Color.RED;
+      case "orange":
+        return Color.ORANGE;
+      case "yellow":
+        return Color.YELLOW;
+      case "green":
+        return Color.GREEN;
+      case "teal":
+        return Color.TEAL;
+      case "cyan":
+        return Color.CYAN;
+      case "white":
+        return Color.WHITE;
+      case "gray":
+        return Color.GRAY;
+      case "gray-dark":
+        return Color.GRAY_DARK;
+      case "primary":
+        return Color.PRIMARY;
+      case "secondary":
+        return Color.SECONDARY;
+      case "success":
+        return Color.SUCCESS;
+      case "info":
+        return Color.INFO;
+      case "warning":
+        return Color.WARNING;
+      case "danger":
+        return Color.DANGER;
+      case "light":
+        return Color.LIGHT;
+      case "dark":
+        return Color.DARK;
+      default:
+        return identifier;
+    }
   }
 
   private parseIdentifier(): string {

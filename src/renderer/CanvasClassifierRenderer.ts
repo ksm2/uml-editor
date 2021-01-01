@@ -55,7 +55,7 @@ class CanvasClassifierRenderer implements ClassifierRenderer {
     this.canvas.strokeStyle = properties.getColor("stroke", Color.DARK).toHexString();
     let fill = properties.getColor("fill", Color.WHITE);
     if (classifier.isHovered()) {
-      fill = fill.mix(Color.CYAN, 0.25);
+      fill = fill.mix(Color.INFO, 0.25);
     }
     this.canvas.fillStyle = fill.toHexString();
   }

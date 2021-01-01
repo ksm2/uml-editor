@@ -3,8 +3,26 @@ class Color {
   readonly green: number;
   readonly blue: number;
 
+  static readonly BLUE = Color.fromHexString("#0d6efd");
+  static readonly INDIGO = Color.fromHexString("#6610f2");
+  static readonly PURPLE = Color.fromHexString("#6f42c1");
+  static readonly PINK = Color.fromHexString("#d63384");
+  static readonly RED = Color.fromHexString("#dc3545");
+  static readonly ORANGE = Color.fromHexString("#fd7e14");
+  static readonly YELLOW = Color.fromHexString("#ffc107");
+  static readonly GREEN = Color.fromHexString("#198754");
+  static readonly TEAL = Color.fromHexString("#20c997");
   static readonly CYAN = Color.fromHexString("#0dcaf0");
   static readonly WHITE = Color.fromHexString("#ffffff");
+  static readonly GRAY = Color.fromHexString("#6c757d");
+  static readonly GRAY_DARK = Color.fromHexString("#343a40");
+  static readonly PRIMARY = Color.fromHexString("#0d6efd");
+  static readonly SECONDARY = Color.fromHexString("#6c757d");
+  static readonly SUCCESS = Color.fromHexString("#198754");
+  static readonly INFO = Color.CYAN;
+  static readonly WARNING = Color.YELLOW;
+  static readonly DANGER = Color.RED;
+  static readonly LIGHT = Color.fromHexString("#f8f9fa");
   static readonly DARK = Color.fromHexString("#212529");
 
   constructor(red: number, green: number, blue: number) {
