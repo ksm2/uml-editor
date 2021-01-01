@@ -1,3 +1,4 @@
+import useDocumentTitle from "./useDocumentTitle";
 import useId from "./useId";
 
-export { useId }
+export { useDocumentTitle, useId };

@@ -35,3 +35,7 @@ export function roundCoordsBy(coord: Coordinates, by: number): Coordinates {
     y: Math.round(coord.y / by) * by,
   };
 }
+
+export function sanitizeFilename(element: string): string {
+  return element.replace(/[^a-zA-Z_-]+/g, "-");
+}

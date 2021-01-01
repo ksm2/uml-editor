@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { parser, Style } from "../css";
+import { useDocumentTitle } from "../hooks";
 import { Diagram, Element } from "../model";
 import { serializer } from "../serializer";
 import "./App.css";
@@ -8,8 +9,11 @@ import { AppMenu, Canvas, CSSEditor, XMLEditor } from "./widgets";
 function App() {
   const [diagram, setDiagram] = useState(() => new Diagram());
   const [style, setStyle] = useState(() => new Style());
+  const [title, setTitle] = useState("Untitled");
   const [xml, setXml] = useState("");
   const [css, setCss] = useState("");
+
+  useDocumentTitle(`${title} - UML Editor`);
 
   function handleXmlChange(xml: string): void {
     const diagram = serializer.deserialize(xml);
@@ -69,7 +73,7 @@ Class {
 
   return (
     <div className="App bg-secondary">
-      <AppMenu diagram={diagram} style={style} />
+      <AppMenu title={title} diagram={diagram} style={style} onTitleChange={setTitle} />
       <XMLEditor xml={xml} onChange={handleXmlChange} />
       <CSSEditor css={css} onChange={handleCssChange} />
       <Canvas diagram={diagram} style={style} onChange={handleCanvasChange} />

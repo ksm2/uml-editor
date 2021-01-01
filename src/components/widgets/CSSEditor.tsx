@@ -1,4 +1,4 @@
-import Editor from "../blocks/Editor";
+import { Editor } from "../blocks";
 
 interface Props {
   css: string;
