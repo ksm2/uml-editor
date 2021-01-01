@@ -15,7 +15,11 @@ function FileOpen({ onFileChange }: Props) {
     });
   }
 
-  return <DropdownItem onClick={handleClick}>Open</DropdownItem>;
+  return (
+    <DropdownItem onClick={handleClick} shortcut="Ctrl-O">
+      Open
+    </DropdownItem>
+  );
 }
 
 export default FileOpen;

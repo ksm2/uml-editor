@@ -24,7 +24,11 @@ function PNGExport({ file }: Props) {
     downloadFile(`${sanitizeFilename(file.title)}.png`, dataURL);
   }
 
-  return <DropdownItem onClick={handleClick}>As PNG</DropdownItem>;
+  return (
+    <DropdownItem onClick={handleClick} shortcut="Ctrl-E">
+      As PNG
+    </DropdownItem>
+  );
 }
 
 export default PNGExport;

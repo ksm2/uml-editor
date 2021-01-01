@@ -14,7 +14,11 @@ function FileSave({ file }: Props) {
     downloadFile(`${sanitizeFilename(file.title)}.uml`, url.toString());
   }
 
-  return <DropdownItem onClick={handleClick}>Save</DropdownItem>;
+  return (
+    <DropdownItem onClick={handleClick} shortcut="Ctrl-S">
+      Save
+    </DropdownItem>
+  );
 }
 
 export default FileSave;
