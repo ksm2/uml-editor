@@ -1,4 +1,6 @@
 import { MouseEvent } from "react";
+import { Style } from "./css";
+import { Diagram } from "./model";
 
 export interface Coordinates {
   readonly x: number;
@@ -11,6 +13,13 @@ export interface Consumer<T> {
 
 export interface Predicate<T> {
   (item: T): boolean;
+}
+
+export interface File {
+  title: string;
+  model: Diagram;
+  css: string;
+  style: Style;
 }
 
 export function getMouseCoordinates(event: MouseEvent<HTMLCanvasElement>): Coordinates {

@@ -73,7 +73,7 @@ Class {
 
   return (
     <div className="App bg-secondary">
-      <AppMenu title={title} diagram={diagram} style={style} onTitleChange={setTitle} />
+      <AppMenu file={{ title, model: diagram, style, css }} onTitleChange={setTitle} />
       <XMLEditor xml={xml} onChange={handleXmlChange} />
       <CSSEditor css={css} onChange={handleCssChange} />
       <Canvas diagram={diagram} style={style} onChange={handleCanvasChange} />

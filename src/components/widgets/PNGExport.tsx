@@ -1,32 +1,28 @@
-import { Style } from "../../css";
-import { Diagram } from "../../model";
 import { CanvasRenderer } from "../../renderer";
-import { sanitizeFilename } from "../../utils";
+import { File, sanitizeFilename } from "../../utils";
 import { DropdownItem } from "../blocks";
 
 interface Props {
-  title: string;
-  diagram: Diagram;
-  style: Style;
+  file: File;
 }
 
 const MARGIN = 10;
 
-function PNGExport({ title, diagram, style }: Props) {
+function PNGExport({ file }: Props) {
   function handleClick() {
     const canvas = document.createElement("canvas");
-    canvas.width = diagram.getWidth() + 2 * MARGIN;
-    canvas.height = diagram.getHeight() + 2 * MARGIN;
+    canvas.width = file.model.getWidth() + 2 * MARGIN;
+    canvas.height = file.model.getHeight() + 2 * MARGIN;
 
-    const renderer = new CanvasRenderer(canvas, style, {
-      translateX: MARGIN - diagram.getLeft(),
-      translateY: MARGIN - diagram.getTop(),
+    const renderer = new CanvasRenderer(canvas, file.style, {
+      translateX: MARGIN - file.model.getLeft(),
+      translateY: MARGIN - file.model.getTop(),
     });
-    renderer.renderDiagram(diagram);
+    renderer.renderDiagram(file.model);
 
     const dataURL = canvas.toDataURL("image/png");
     const downloadLink = document.createElement("a");
-    downloadLink.download = `${sanitizeFilename(title)}.png`;
+    downloadLink.download = `${sanitizeFilename(file.title)}.png`;
     downloadLink.href = dataURL;
     downloadLink.click();
   }

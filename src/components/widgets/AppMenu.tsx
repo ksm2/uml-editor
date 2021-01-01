@@ -1,25 +1,24 @@
 import { Dispatch } from "react";
-import { Style } from "../../css";
-import { Diagram } from "../../model";
 import { MenuBar, Menu } from "../blocks";
+import { File } from "../../utils";
 import FileRename from "./FileRename";
+import FileSave from "./FileSave";
 import PNGExport from "./PNGExport";
 
 interface Props {
-  title: string;
-  diagram: Diagram;
-  style: Style;
+  file: File;
   onTitleChange: Dispatch<string>;
 }
 
-function AppMenu({ title, diagram, style, onTitleChange }: Props) {
+function AppMenu({ file, onTitleChange }: Props) {
   return (
     <MenuBar>
       <Menu title="File">
-        <FileRename title={title} onTitleChange={onTitleChange} />
+        <FileSave file={file} />
+        <FileRename file={file} onTitleChange={onTitleChange} />
       </Menu>
       <Menu title="Export">
-        <PNGExport title={title} diagram={diagram} style={style} />
+        <PNGExport file={file} />
       </Menu>
     </MenuBar>
   );
