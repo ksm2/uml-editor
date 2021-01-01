@@ -7,7 +7,7 @@ interface Props {
 
 function CSSEditor({ css, onChange }: Props) {
   return (
-    <div className="CSSEditor" style={{ gridArea: "css" }}>
+    <div className="CSSEditor" style={{ gridArea: "css", position: "relative" }}>
       <Editor language="css" value={css} onChange={onChange} />
     </div>
   );

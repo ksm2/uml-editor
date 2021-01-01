@@ -6,7 +6,7 @@
   grid-template:
     "menu menu" min-content
     "xml canvas" 1fr
-    "css canvas" 1fr / 45% 55%;
+    "css canvas" 1fr / minmax(30rem, 45rem) auto;
   flex-flow: column nowrap;
   justify-content: stretch;
 }
