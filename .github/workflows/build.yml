@@ -6,20 +6,29 @@ name: Build
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
-  build:
-
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js
       uses: actions/setup-node@v1
       with:
         node-version: 14.x
-    - run: yarn install --frozen-lockfile
-    - run: yarn build
-    - run: yarn test
+    - name: Install Dependencies
+      run: yarn install --frozen-lockfile
+
+    - name: Build App
+      run: yarn build
+
+    - name: Unit Tests
+      run: yarn test
+
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@3.7.1
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: build
+        FOLDER: build
+        CLEAN: true

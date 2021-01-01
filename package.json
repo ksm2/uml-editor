@@ -25,6 +25,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "postbuild": "echo -n uml-editor.app > build/CNAME",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prettier:write": "prettier --write './src/**/*.{css,md,ts,tsx}'",
