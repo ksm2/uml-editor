@@ -8,6 +8,7 @@ import FileRename from "./FileRename";
 import FileSave from "./FileSave";
 import Grid from "./Grid";
 import PNGExport from "./PNGExport";
+import SVGExport from "./SVGExport";
 
 interface Props {
   file: File;
@@ -37,6 +38,7 @@ function AppMenu({ file, viewOptions, onFileChange, onViewOptionsChange, onLocal
 
       <Menu title={intl.formatMessage({ id: "export", defaultMessage: "Export" })}>
         <PNGExport file={file} />
+        <SVGExport file={file} />
       </Menu>
 
       <div className="flex-grow-1" />

@@ -1,5 +1,6 @@
 export const GRID = 20;
 export const PADDING = 10;
+export const MARGIN = 10;
 export const HANDLE_RADIUS = 4.5;
 export const INITIAL_XML = `\
 <Diagram>

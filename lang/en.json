@@ -5,6 +5,9 @@
   "export.png": {
     "defaultMessage": "As PNG ..."
   },
+  "export.svg": {
+    "defaultMessage": "As SVG ..."
+  },
   "file": {
     "defaultMessage": "File"
   },

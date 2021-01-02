@@ -1,14 +1,15 @@
 import { Color } from "../css";
 import { Classifier, ClassifierRenderer, Renderer, Shape } from "../model";
 import { PADDING } from "../constants";
+import Canvas from "./Canvas";
 import RenderContext from "./RenderContext";
 
 class CanvasClassifierRenderer implements ClassifierRenderer {
   private readonly renderer: Renderer;
   private readonly context: RenderContext;
-  private readonly canvas: CanvasRenderingContext2D;
+  private readonly canvas: Canvas;
 
-  constructor(renderer: Renderer, context: RenderContext, canvas: CanvasRenderingContext2D) {
+  constructor(renderer: Renderer, context: RenderContext, canvas: Canvas) {
     this.renderer = renderer;
     this.context = context;
     this.canvas = canvas;
@@ -52,12 +53,12 @@ class CanvasClassifierRenderer implements ClassifierRenderer {
   private applyStyle(classifier: Classifier): void {
     const properties = this.context.getStyleProperties();
     this.canvas.lineWidth = properties.getFloat("line-width", 1.5);
-    this.canvas.strokeStyle = properties.getColor("stroke", Color.DARK).toHexString();
+    this.canvas.strokeColor = properties.getColor("stroke", Color.DARK);
     let fill = properties.getColor("fill", Color.WHITE);
     if (classifier.isHovered()) {
       fill = fill.mix(Color.INFO, 0.25);
     }
-    this.canvas.fillStyle = fill.toHexString();
+    this.canvas.fillColor = fill;
   }
 
   private drawShape(classifier: Classifier): void {
@@ -113,7 +114,7 @@ class CanvasClassifierRenderer implements ClassifierRenderer {
   private drawEllipseShape(classifier: Classifier) {
     const w = classifier.getWidth();
     const h = classifier.getHeight();
-    this.canvas.ellipse(w / 2, h / 2, w / 2, h / 2, 0, 0, 2 * Math.PI);
+    this.canvas.ellipse(0, 0, w, h);
   }
 
   private drawFolderShape(classifier: Classifier) {

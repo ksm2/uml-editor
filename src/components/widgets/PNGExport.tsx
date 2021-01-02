@@ -1,4 +1,5 @@
 import { FormattedMessage } from "react-intl";
+import { MARGIN } from "../../constants";
 import { CanvasRenderer } from "../../renderer";
 import { downloadFile, File, sanitizeFilename } from "../../utils";
 import { DropdownItem, Icon } from "../blocks";
@@ -6,8 +7,6 @@ import { DropdownItem, Icon } from "../blocks";
 interface Props {
   file: File;
 }
-
-const MARGIN = 10;
 
 function PNGExport({ file }: Props) {
   function handleClick() {
