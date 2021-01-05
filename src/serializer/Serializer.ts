@@ -64,7 +64,6 @@ class Serializer {
         return this.parseRelationship(Model.Relationship, element);
       case "Title":
         return this.parseTitle(element);
-      case "Method":
       case "Text":
         return this.parseText(element);
       case "Separator":

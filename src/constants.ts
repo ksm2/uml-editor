@@ -13,7 +13,7 @@ export const INITIAL_XML = `\
     <Stereotype/>
     <Title>Concrete Visitor</Title>
     <Separator/>
-    <Method>visitSomething(something: Something)</Method>
+    <Text>visitSomething(something: Something)</Text>
   </Class>
 
   <Implementation from="c1" to="i1" fromAnchor="n" toAnchor="s"/>
