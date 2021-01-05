@@ -64,6 +64,7 @@ function Editor({ language, value, schema, onChange }: Props) {
       theme: "nord",
       matchTags: true,
       autocorrect: true,
+      tabSize: 2,
       extraKeys: {
         "'<'": completeAfter,
         "'/'": completeIfAfterLt,
