@@ -6,10 +6,11 @@ import Shortcut from "./Shortcut";
 interface Props {
   onClick?: () => void;
   shortcut?: string;
+  active?: boolean;
   children?: ReactNode;
 }
 
-function DropdownItem({ onClick, shortcut, children }: Props) {
+function DropdownItem({ onClick, shortcut, active, children }: Props) {
   function handleClick(event: MouseEvent) {
     event.preventDefault();
     onClick?.();
@@ -21,7 +22,10 @@ function DropdownItem({ onClick, shortcut, children }: Props) {
 
   return (
     <li>
-      <button onClick={handleClick} className={classNames("btn", "btn-link", "dropdown-item")}>
+      <button
+        onClick={handleClick}
+        className={classNames("btn btn-link dropdown-item", { active })}
+      >
         {children}
         {shortcut && <Shortcut shortcut={shortcut} />}
       </button>

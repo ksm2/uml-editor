@@ -1,16 +1,17 @@
 import { Dispatch } from "react";
-import { useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { Element } from "../../model";
-import { ViewOptions, File, SerializableFile } from "../../utils";
-import { DropdownDivider, DropdownItem, Flag, Icon, Menu, MenuBar } from "../blocks";
+import { File, SerializableFile, ViewOptions } from "../../utils";
+import { DropdownDivider, ExternalLink, Icon, Menu, MenuBar, NavItem } from "../blocks";
 import DuplicateElement from "./DuplicateElement";
 import FileNew from "./FileNew";
 import FileOpen from "./FileOpen";
 import FileRename from "./FileRename";
 import FileSave from "./FileSave";
-import ToggleGrid from "./ToggleGrid";
+import LocaleItem from "./LocaleItem";
 import PNGExport from "./PNGExport";
 import SVGExport from "./SVGExport";
+import ToggleGrid from "./ToggleGrid";
 
 interface Props {
   file: File;
@@ -57,13 +58,23 @@ function AppMenu({
 
       <div className="flex-grow-1" />
 
-      <Menu placement="end" title={<Icon name="globe" />}>
-        <DropdownItem onClick={() => onLocaleChange("de")}>
-          <Flag country="de" /> Deutsch
-        </DropdownItem>
-        <DropdownItem onClick={() => onLocaleChange("en")}>
-          <Flag country="uk" /> English
-        </DropdownItem>
+      <NavItem>
+        <ExternalLink className="nav-link" href="https://github.com/ksm2/uml-editor">
+          <Icon name="github" />
+          <FormattedMessage id="github" defaultMessage="GitHub" />
+        </ExternalLink>
+      </NavItem>
+      <Menu
+        placement="end"
+        title={
+          <>
+            <Icon name="globe" />
+            <FormattedMessage id="lang" defaultMessage="Language" />
+          </>
+        }
+      >
+        <LocaleItem locale="de" name="Deutsch" onLocaleChange={onLocaleChange} />
+        <LocaleItem locale="en" name="English" onLocaleChange={onLocaleChange} country="uk" />
       </Menu>
     </MenuBar>
   );

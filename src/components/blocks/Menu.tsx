@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import { useId } from "../../hooks";
 import DropdownMenu from "./DropdownMenu";
 import DropdownToggle from "./DropdownToggle";
+import NavItem from "./NavItem";
 
 interface Props {
   active?: boolean;
@@ -15,14 +16,14 @@ function Menu({ active = false, placement, title, children }: Props) {
   const id = useId("Menu");
 
   return (
-    <li className="nav-item dropdown">
+    <NavItem className="dropdown">
       <DropdownToggle id={id} className={classNames("nav-link", { active })}>
         {title}
       </DropdownToggle>
       <DropdownMenu placement={placement} labelledBy={id}>
         {children}
       </DropdownMenu>
-    </li>
+    </NavItem>
   );
 }
 

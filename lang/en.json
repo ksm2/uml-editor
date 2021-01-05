@@ -35,6 +35,12 @@
   "file.save": {
     "defaultMessage": "Save ..."
   },
+  "github": {
+    "defaultMessage": "GitHub"
+  },
+  "lang": {
+    "defaultMessage": "Language"
+  },
   "shortcut.alt": {
     "defaultMessage": "Alt"
   },
