@@ -46,6 +46,15 @@ class Relationship extends AbstractElement {
   render(renderer: Renderer): void {
     renderer.renderRelationship(this);
   }
+
+  getTagName(): string {
+    return "Relationship";
+  }
+
+  clone(): Relationship {
+    const { constructor } = Object.getPrototypeOf(this);
+    return new constructor(this.from, this.fromAnchor, this.to, this.toAnchor);
+  }
 }
 
 export default Relationship;

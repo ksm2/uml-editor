@@ -94,6 +94,11 @@ class Classifier extends AbstractElement {
   render(renderer: Renderer): void {
     renderer.renderClassifier(this);
   }
+
+  clone(): Classifier {
+    const { constructor } = Object.getPrototypeOf(this);
+    return new constructor(this.anchor, this.x + 20, this.y + 20, this.width, this.height);
+  }
 }
 
 export default Classifier;

@@ -9,6 +9,14 @@ class Diagram extends AbstractElement {
     renderer.renderDiagram(this);
   }
 
+  getTagName(): string {
+    return "Diagram";
+  }
+
+  clone(): Diagram {
+    return new Diagram();
+  }
+
   find(predicate: Predicate<Element>): Element | undefined {
     return this.findElement(this, predicate);
   }

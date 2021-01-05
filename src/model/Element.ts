@@ -9,6 +9,8 @@ interface Element extends Iterable<Element> {
   setHovered(hovered: boolean): void;
   isSelected(): boolean;
   setSelected(selected: boolean): void;
+  getTagName(): string;
+  clone(): Element;
 }
 
 export default Element;

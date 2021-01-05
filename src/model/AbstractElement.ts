@@ -8,6 +8,10 @@ abstract class AbstractElement implements Element {
 
   abstract render(renderer: Renderer): void;
 
+  abstract getTagName(): string;
+
+  abstract clone(): Element;
+
   getChildren(): readonly Element[] {
     return [...this.children];
   }
