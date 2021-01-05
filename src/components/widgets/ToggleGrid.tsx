@@ -8,7 +8,7 @@ interface Props {
   onViewOptionsChange: Dispatch<ViewOptions>;
 }
 
-function Grid({ viewOptions, onViewOptionsChange }: Props) {
+function ToggleGrid({ viewOptions, onViewOptionsChange }: Props) {
   const { grid } = viewOptions;
   const icon = grid ? "grid-3x3-gap-fill" : "grid-3x3-gap";
 
@@ -23,4 +23,4 @@ function Grid({ viewOptions, onViewOptionsChange }: Props) {
   );
 }
 
-export default Grid;
+export default ToggleGrid;

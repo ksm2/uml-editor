@@ -6,7 +6,7 @@ import FileNew from "./FileNew";
 import FileOpen from "./FileOpen";
 import FileRename from "./FileRename";
 import FileSave from "./FileSave";
-import Grid from "./Grid";
+import ToggleGrid from "./ToggleGrid";
 import PNGExport from "./PNGExport";
 import SVGExport from "./SVGExport";
 
@@ -33,7 +33,7 @@ function AppMenu({ file, viewOptions, onFileChange, onViewOptionsChange, onLocal
       </Menu>
 
       <Menu title={intl.formatMessage({ id: "view", defaultMessage: "View" })}>
-        <Grid viewOptions={viewOptions} onViewOptionsChange={onViewOptionsChange} />
+        <ToggleGrid viewOptions={viewOptions} onViewOptionsChange={onViewOptionsChange} />
       </Menu>
 
       <Menu title={intl.formatMessage({ id: "export", defaultMessage: "Export" })}>
