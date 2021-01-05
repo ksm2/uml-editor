@@ -54,6 +54,12 @@ function App({ onLocaleChange }: Props) {
     forceRerender();
   }
 
+  function handleDeleteElement(element: Element): void {
+    diagram.deleteChild(element);
+    handleCanvasChange(diagram);
+    forceRerender();
+  }
+
   function handleFileChange(file: SerializableFile): void {
     const diagram = serializer.deserialize(file.xml);
     const style = parser.parseFromString(file.css);
@@ -82,6 +88,7 @@ function App({ onLocaleChange }: Props) {
         onViewOptionsChange={setViewOptions}
         onLocaleChange={onLocaleChange}
         onAddElement={handleAddElement}
+        onDeleteElement={handleDeleteElement}
       />
       <XMLEditor xml={xml} onChange={handleXmlChange} />
       <CSSEditor css={css} onChange={handleCssChange} />

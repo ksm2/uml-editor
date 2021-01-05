@@ -3,6 +3,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { Element } from "../../model";
 import { File, SerializableFile, ViewOptions } from "../../utils";
 import { DropdownDivider, ExternalLink, Icon, Menu, MenuBar, NavItem } from "../blocks";
+import DeleteElement from "./DeleteElement";
 import DuplicateElement from "./DuplicateElement";
 import FileNew from "./FileNew";
 import FileOpen from "./FileOpen";
@@ -20,6 +21,7 @@ interface Props {
   onViewOptionsChange: Dispatch<ViewOptions>;
   onLocaleChange: Dispatch<string>;
   onAddElement: Dispatch<Element>;
+  onDeleteElement: Dispatch<Element>;
 }
 
 function AppMenu({
@@ -29,6 +31,7 @@ function AppMenu({
   onViewOptionsChange,
   onLocaleChange,
   onAddElement,
+  onDeleteElement,
 }: Props) {
   const intl = useIntl();
 
@@ -45,6 +48,7 @@ function AppMenu({
 
       <Menu title={intl.formatMessage({ id: "edit", defaultMessage: "Edit" })}>
         <DuplicateElement file={file} onAddElement={onAddElement} />
+        <DeleteElement file={file} onDeleteElement={onDeleteElement} />
       </Menu>
 
       <Menu title={intl.formatMessage({ id: "view", defaultMessage: "View" })}>

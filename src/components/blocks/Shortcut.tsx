@@ -7,8 +7,9 @@ interface Props {
 function Shortcut({ shortcut }: Props) {
   const intl = useIntl();
   const parts = new Map([
-    ["Ctrl", intl.formatMessage({ id: "shortcut.ctrl", defaultMessage: "Ctrl" })],
     ["Alt", intl.formatMessage({ id: "shortcut.alt", defaultMessage: "Alt" })],
+    ["Ctrl", intl.formatMessage({ id: "shortcut.ctrl", defaultMessage: "Ctrl" })],
+    ["Delete", intl.formatMessage({ id: "shortcut.delete", defaultMessage: "Delete" })],
     ["Shift", intl.formatMessage({ id: "shortcut.shift", defaultMessage: "Shift" })],
   ]);
 

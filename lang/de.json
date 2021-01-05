@@ -2,6 +2,9 @@
   "edit": {
     "defaultMessage": "Bearbeiten"
   },
+  "edit.delete": {
+    "defaultMessage": "Löschen"
+  },
   "edit.duplicate": {
     "defaultMessage": "Duplizieren"
   },
@@ -46,6 +49,9 @@
   },
   "shortcut.ctrl": {
     "defaultMessage": "Strg"
+  },
+  "shortcut.delete": {
+    "defaultMessage": "Entf"
   },
   "shortcut.shift": {
     "defaultMessage": "Umsch"

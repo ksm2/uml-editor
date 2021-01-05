@@ -160,10 +160,21 @@ class Serializer {
   }
 
   private updateChildren(element: Element, target: Model.Element) {
+    const visitedChildren = new Set<Element>();
     for (const child of target.getChildren()) {
       const childElement = this.getOrCreateElement(element, child);
       this.setElement(childElement, child);
+      visitedChildren.add(childElement);
     }
+
+    for (const child of element.children) {
+      if (!visitedChildren.has(child)) {
+        child.remove();
+        this.elementMap.delete(child);
+      }
+    }
+
+    this.cleanupWhiteSpace(element);
   }
 
   private getOrCreateElement(element: Element, child: Model.Element): Element {
@@ -288,10 +299,7 @@ class Serializer {
     newElement.setAttribute("id", id);
     this.elementMap.set(newElement, element);
 
-    this.trailElementEnd(parent);
-    this.addText(parent, this.getIndent(this.getLevel(1, parent)));
     parent.appendChild(newElement);
-    this.addText(parent, this.getIndent(this.getLevel(0, parent)));
 
     return newElement;
   }
@@ -311,14 +319,24 @@ class Serializer {
     return prefix + i;
   }
 
-  private trailElementEnd(element: Element): void {
-    const { childNodes } = element;
-    if (childNodes.length > 0) {
-      const lastNode = childNodes.item(childNodes.length - 1);
-      if (lastNode instanceof Text) {
-        lastNode.remove();
-      }
+  private cleanupWhiteSpace(element: Element): void {
+    const level = this.getLevel(0, element);
+    const originalChildren = [...element.children];
+    while (element.childNodes.length > 0) {
+      element.removeChild(element.childNodes.item(0));
     }
+
+    let first = true;
+    for (const originalChild of originalChildren) {
+      let extraNewLine = "";
+      if (level === 0 && !first) {
+        extraNewLine = "\n";
+      }
+      this.addText(element, extraNewLine + this.getIndent(level + 1));
+      element.appendChild(originalChild);
+      first = false;
+    }
+    this.addText(element, this.getIndent(level));
   }
 
   private getIndent(level: number): string {
