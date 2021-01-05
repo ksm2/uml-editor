@@ -6,7 +6,7 @@ import Renderer from "./Renderer";
 import Shape from "./Shape";
 
 class Classifier extends AbstractElement {
-  private readonly anchor: Anchor;
+  readonly anchor: Anchor;
   x: number;
   y: number;
   private width: number;

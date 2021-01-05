@@ -1,4 +1,3 @@
-import { Classifier } from "../model";
 import * as Model from "../model";
 
 interface Class<T> {
@@ -38,9 +37,7 @@ class Serializer {
   updateElement(element: Model.Element): void {
     if (this.hasElement(element)) {
       const xmlElement = this.getElement(element)!;
-      if (element instanceof Classifier) {
-        this.setClassifier(xmlElement, element);
-      }
+      this.setElement(xmlElement, element);
     }
   }
 
@@ -49,12 +46,22 @@ class Serializer {
       return this.elementMap.get(element)!;
     }
 
-    const parsed = this.doParseElement(element);
+    const parsed = this.parseElementSwitch(element);
     this.elementMap.set(element, parsed);
     return parsed;
   }
 
-  protected doParseElement(element: Element): Model.Element {
+  private setElement(xmlElement: Element, element: Model.Element) {
+    if (element instanceof Model.Diagram) {
+      this.setDiagram(xmlElement, element);
+    } else if (element instanceof Model.Classifier) {
+      this.setClassifier(xmlElement, element);
+    } else if (element instanceof Model.Text) {
+      this.setText(xmlElement, element);
+    }
+  }
+
+  protected parseElementSwitch(element: Element): Model.Element {
     switch (element.tagName) {
       case "Diagram":
         return this.parseDiagram(element);
@@ -81,6 +88,10 @@ class Serializer {
     return diagram;
   }
 
+  private setDiagram(element: Element, diagram: Model.Diagram): void {
+    this.updateChildren(element, diagram);
+  }
+
   protected parseClassifier<C extends Model.Classifier>(
     constructor: Class<C>,
     element: Element,
@@ -96,11 +107,13 @@ class Serializer {
     return classifier;
   }
 
-  protected setClassifier(element: Element, classifier: Classifier): void {
+  protected setClassifier(element: Element, classifier: Model.Classifier): void {
+    this.setAnchorAttribute(element, "anchor", classifier.anchor);
     this.setIntAttribute(element, "x", 0, classifier.getX());
     this.setIntAttribute(element, "y", 0, classifier.getY());
     this.setIntAttribute(element, "width", 200, classifier.getWidth());
     this.setIntAttribute(element, "height", 120, classifier.getHeight());
+    this.updateChildren(element, classifier);
   }
 
   protected parseRelationship<R extends Model.Relationship>(
@@ -132,6 +145,10 @@ class Serializer {
     return new Model.Text(text);
   }
 
+  private setText(element: Element, text: Model.Text) {
+    element.textContent = text.text;
+  }
+
   private parseChildren(element: Element, target: Model.Element) {
     for (const child of element.children) {
       try {
@@ -139,6 +156,21 @@ class Serializer {
       } catch (err) {
         console.error(err);
       }
+    }
+  }
+
+  private updateChildren(element: Element, target: Model.Element) {
+    for (const child of target.getChildren()) {
+      const childElement = this.getOrCreateElement(element, child);
+      this.setElement(childElement, child);
+    }
+  }
+
+  private getOrCreateElement(element: Element, child: Model.Element): Element {
+    if (this.hasElement(child)) {
+      return this.getElement(child)!;
+    } else {
+      return this.createElement(element, child);
     }
   }
 
@@ -163,6 +195,10 @@ class Serializer {
 
   private parseAnchorAttribute(element: Element, attribute: string): Model.Anchor {
     return this.parseEnumAttribute(Model.Anchor, element, attribute, Model.Anchor.S);
+  }
+
+  private setAnchorAttribute(element: Element, attribute: string, anchor: Model.Anchor) {
+    this.setEnumAttribute(Model.Anchor, element, attribute, anchor);
   }
 
   private parseTipAttribute(element: Element, attribute: string, fallback: Model.Tip): Model.Tip {
@@ -192,6 +228,16 @@ class Serializer {
     }
 
     return fallback;
+  }
+
+  private setEnumAttribute(
+    enumClass: Record<number, string>,
+    element: Element,
+    attribute: string,
+    enumValue: number,
+  ): void {
+    const value = enumClass[enumValue].toLowerCase();
+    element.setAttribute(attribute, value);
   }
 
   private parseIntAttribute(element: Element, attribute: string, fallback: number): number {
@@ -234,6 +280,61 @@ class Serializer {
       }
     }
     return undefined;
+  }
+
+  private createElement(parent: Element, element: Model.Element): Element {
+    const newElement = parent.ownerDocument.createElement(element.getTagName());
+    const id = this.generateId(parent.ownerDocument, element);
+    newElement.setAttribute("id", id);
+    this.elementMap.set(newElement, element);
+
+    this.trailElementEnd(parent);
+    this.addText(parent, this.getIndent(this.getLevel(1, parent)));
+    parent.appendChild(newElement);
+    this.addText(parent, this.getIndent(this.getLevel(0, parent)));
+
+    return newElement;
+  }
+
+  private generateId(document: Document, element: Model.Element): string {
+    let prefix = element.getTagName().toLowerCase();
+    if (prefix === "interface") {
+      prefix = "i";
+    } else if (prefix === "class") {
+      prefix = "c";
+    }
+
+    let i = 1;
+    while (document.getElementById(prefix + i) !== null) {
+      i += 1;
+    }
+    return prefix + i;
+  }
+
+  private trailElementEnd(element: Element): void {
+    const { childNodes } = element;
+    if (childNodes.length > 0) {
+      const lastNode = childNodes.item(childNodes.length - 1);
+      if (lastNode instanceof Text) {
+        lastNode.remove();
+      }
+    }
+  }
+
+  private getIndent(level: number): string {
+    return "\n" + "  ".repeat(level);
+  }
+
+  private getLevel(offset: number, parent: Element): number {
+    if (parent.parentElement === null) {
+      return offset;
+    } else {
+      return this.getLevel(offset + 1, parent.parentElement);
+    }
+  }
+
+  private addText(parent: Element, data: string): void {
+    parent.appendChild(parent.ownerDocument.createTextNode(data));
   }
 }
 

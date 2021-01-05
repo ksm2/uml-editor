@@ -26,6 +26,10 @@ function App({ onLocaleChange }: Props) {
     `${title} - ${intl.formatMessage({ id: "title", defaultMessage: "UML Editor" })}`,
   );
 
+  function forceRerender(): void {
+    setViewOptions({ ...viewOptions });
+  }
+
   function handleXmlChange(xml: string): void {
     const diagram = serializer.deserialize(xml);
     setDiagram(diagram);
@@ -42,6 +46,12 @@ function App({ onLocaleChange }: Props) {
     serializer.updateElement(element);
     const xml = serializer.serialize(diagram);
     setXml(xml);
+  }
+
+  function handleAddElement(element: Element): void {
+    diagram.addChild(element);
+    handleCanvasChange(diagram);
+    forceRerender();
   }
 
   function handleFileChange(file: SerializableFile): void {
@@ -71,6 +81,7 @@ function App({ onLocaleChange }: Props) {
         onFileChange={handleFileChange}
         onViewOptionsChange={setViewOptions}
         onLocaleChange={onLocaleChange}
+        onAddElement={handleAddElement}
       />
       <XMLEditor xml={xml} onChange={handleXmlChange} />
       <CSSEditor css={css} onChange={handleCssChange} />

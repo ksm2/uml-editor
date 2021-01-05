@@ -1,4 +1,10 @@
 {
+  "edit": {
+    "defaultMessage": "Edit"
+  },
+  "edit.duplicate": {
+    "defaultMessage": "Duplicate"
+  },
   "export": {
     "defaultMessage": "Export"
   },

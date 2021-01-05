@@ -1,7 +1,9 @@
 import { Dispatch } from "react";
 import { useIntl } from "react-intl";
+import { Element } from "../../model";
 import { ViewOptions, File, SerializableFile } from "../../utils";
 import { DropdownDivider, DropdownItem, Flag, Icon, Menu, MenuBar } from "../blocks";
+import DuplicateElement from "./DuplicateElement";
 import FileNew from "./FileNew";
 import FileOpen from "./FileOpen";
 import FileRename from "./FileRename";
@@ -16,9 +18,17 @@ interface Props {
   onFileChange: Dispatch<SerializableFile>;
   onViewOptionsChange: Dispatch<ViewOptions>;
   onLocaleChange: Dispatch<string>;
+  onAddElement: Dispatch<Element>;
 }
 
-function AppMenu({ file, viewOptions, onFileChange, onViewOptionsChange, onLocaleChange }: Props) {
+function AppMenu({
+  file,
+  viewOptions,
+  onFileChange,
+  onViewOptionsChange,
+  onLocaleChange,
+  onAddElement,
+}: Props) {
   const intl = useIntl();
 
   return (
@@ -30,6 +40,10 @@ function AppMenu({ file, viewOptions, onFileChange, onViewOptionsChange, onLocal
         <FileSave file={file} />
         <DropdownDivider />
         <FileRename file={file} onTitleChange={(title) => onFileChange({ ...file, title })} />
+      </Menu>
+
+      <Menu title={intl.formatMessage({ id: "edit", defaultMessage: "Edit" })}>
+        <DuplicateElement file={file} onAddElement={onAddElement} />
       </Menu>
 
       <Menu title={intl.formatMessage({ id: "view", defaultMessage: "View" })}>

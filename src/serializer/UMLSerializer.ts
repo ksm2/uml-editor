@@ -3,7 +3,7 @@ import * as Model from "../model";
 import * as UML from "../uml";
 
 class UMLSerializer extends Serializer {
-  protected doParseElement(element: Element): Model.Element {
+  protected parseElementSwitch(element: Element): Model.Element {
     switch (element.tagName) {
       case "Aggregation":
         return this.parseRelationship(UML.Aggregation, element);
@@ -38,7 +38,7 @@ class UMLSerializer extends Serializer {
       case "Primitive":
         return this.parseClassifier(UML.Primitive, element);
       default:
-        return super.doParseElement(element);
+        return super.parseElementSwitch(element);
     }
   }
 }
