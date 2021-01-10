@@ -2,6 +2,7 @@ import React, { Dispatch, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { INITIAL_CSS, INITIAL_XML } from "../constants";
 import { parser, Style } from "../css";
+import { decode, encode } from "../encoding";
 import { useDocumentTitle } from "../hooks";
 import { Diagram, Element } from "../model";
 import { serializer } from "../serializer";
@@ -72,13 +73,30 @@ function App({ onLocaleChange }: Props) {
   }
 
   useEffect(() => {
-    const diagram = serializer.deserialize(INITIAL_XML);
-    const style = parser.parseFromString(INITIAL_CSS);
+    let docXml = INITIAL_XML;
+    let docCss = INITIAL_CSS;
+    if (window.location.hash.startsWith("#/?doc=")) {
+      const hash = window.location.hash.slice("#/?doc=".length);
+      const file = decode(hash);
+      if (file.xml && file.css) {
+        docXml = file.xml;
+        docCss = file.css;
+        setTitle(file.title);
+      }
+    }
+
+    const diagram = serializer.deserialize(docXml);
+    const style = parser.parseFromString(docCss);
     setDiagram(diagram);
     setStyle(style);
-    setXml(INITIAL_XML);
-    setCss(INITIAL_CSS);
+    setXml(docXml);
+    setCss(docCss);
   }, []);
+
+  useEffect(() => {
+    const hash = encode({ title, xml, css });
+    window.location.hash = `/?doc=${hash}`;
+  }, [title, xml, css]);
 
   return (
     <div className="App bg-secondary">
