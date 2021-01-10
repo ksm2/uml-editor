@@ -13,6 +13,7 @@ class SVGCanvas implements Canvas {
   private readonly stack: SVGElement[];
   private readonly paths: SVGElement[] = [];
   private readonly saved: SVGElement[] = [];
+  private readonly matrix: DOMMatrix[] = [new DOMMatrix()];
   private path?: SVGPathElement;
   private dash: number[] = [];
 
@@ -27,11 +28,17 @@ class SVGCanvas implements Canvas {
 
   save(): void {
     this.saved.push(this.getContainer());
+    this.matrix.push(new DOMMatrix(this.currentMatrix().toString()));
+  }
+
+  private currentMatrix(): DOMMatrix {
+    return this.matrix[this.matrix.length - 1];
   }
 
   restore(): void {
     const saved = this.saved.pop()!;
     this.stack.splice(this.stack.indexOf(saved) + 1);
+    this.matrix.pop();
   }
 
   translate(x: number, y: number): void {
@@ -40,6 +47,7 @@ class SVGCanvas implements Canvas {
     this.getContainer().append(svg);
 
     this.stack.push(svg);
+    this.currentMatrix().translate(x, y);
   }
 
   rotate(angle: number): void {
@@ -48,6 +56,7 @@ class SVGCanvas implements Canvas {
     this.getContainer().append(svg);
 
     this.stack.push(svg);
+    this.currentMatrix().rotate(angle);
   }
 
   beginPath(): void {
@@ -88,6 +97,10 @@ class SVGCanvas implements Canvas {
   closePath(): void {
     const data = this.path!.getAttribute("d");
     this.path!.setAttribute("d", `${data} Z`);
+  }
+
+  getTransform(): DOMMatrix {
+    return this.currentMatrix();
   }
 
   isPointInPath(x: number, y: number): boolean {

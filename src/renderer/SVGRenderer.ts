@@ -27,7 +27,7 @@ class SVGRenderer implements Renderer {
     this.context = new RenderContext(svg.width.baseVal.value, svg.height.baseVal.value, style);
     this.canvas = new SVGCanvas(svg);
     this.classifierRenderer = new CanvasClassifierRenderer(this, this.context, this.canvas);
-    this.relationshipRenderer = new CanvasRelationshipRenderer(this.canvas);
+    this.relationshipRenderer = new CanvasRelationshipRenderer(this, this.canvas);
   }
 
   renderDiagram(diagram: Diagram): void {

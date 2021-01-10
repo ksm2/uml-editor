@@ -33,7 +33,7 @@ class CanvasRenderer implements Renderer {
     this.canvas = canvas.getContext("2d")!;
     const html5Canvas = new HTML5Canvas(this.canvas);
     this.classifierRenderer = new CanvasClassifierRenderer(this, this.context, html5Canvas);
-    this.relationshipRenderer = new CanvasRelationshipRenderer(html5Canvas);
+    this.relationshipRenderer = new CanvasRelationshipRenderer(this, html5Canvas);
   }
 
   clear(): void {

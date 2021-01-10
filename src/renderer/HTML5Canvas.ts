@@ -114,6 +114,10 @@ class HTML5Canvas implements Canvas {
     this.ctx.closePath();
   }
 
+  getTransform(): DOMMatrix {
+    return this.ctx.getTransform();
+  }
+
   fill(): void {
     this.ctx.fill();
   }

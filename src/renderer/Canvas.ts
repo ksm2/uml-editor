@@ -20,6 +20,7 @@ interface Canvas {
   lineTo(x: number, y: number): void;
   isPointInPath(x: number, y: number): boolean;
   closePath(): void;
+  getTransform(): DOMMatrix;
   fill(): void;
   stroke(): void;
   clip(): void;
