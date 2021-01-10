@@ -1,7 +1,7 @@
-import { Dispatch } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Element } from "../../model";
-import { File, SerializableFile, ViewOptions } from "../../utils";
+import { useStore } from "../../modules";
+import { Locale, SerializableFile } from "../../utils";
 import { DropdownDivider, ExternalLink, Icon, Menu, MenuBar, NavItem } from "../blocks";
 import DeleteElement from "./DeleteElement";
 import DuplicateElement from "./DuplicateElement";
@@ -14,45 +14,49 @@ import PNGExport from "./PNGExport";
 import SVGExport from "./SVGExport";
 import ToggleGrid from "./ToggleGrid";
 
-interface Props {
-  file: File;
-  viewOptions: ViewOptions;
-  onFileChange: Dispatch<SerializableFile>;
-  onViewOptionsChange: Dispatch<ViewOptions>;
-  onLocaleChange: Dispatch<string>;
-  onAddElement: Dispatch<Element>;
-  onDeleteElement: Dispatch<Element>;
-}
-
-function AppMenu({
-  file,
-  viewOptions,
-  onFileChange,
-  onViewOptionsChange,
-  onLocaleChange,
-  onAddElement,
-  onDeleteElement,
-}: Props) {
+function AppMenu() {
+  const file = useStore("title", "xml", "css", "model", "style");
+  const { grid, dispatch } = useStore("grid");
   const intl = useIntl();
+
+  function handleFileChange(file: SerializableFile) {
+    dispatch("file/load", file);
+  }
+
+  function handleAddElement(element: Element) {
+    dispatch("file/add", element);
+  }
+
+  function handleDeleteElement(element: Element) {
+    dispatch("file/delete", element);
+  }
+
+  function handleGridChange(grid: boolean) {
+    dispatch("view/grid", grid);
+  }
+
+  function handleLocaleChange(locale: Locale) {
+    dispatch("locale/change", locale);
+  }
 
   return (
     <MenuBar>
       <Menu title={intl.formatMessage({ id: "file", defaultMessage: "File" })}>
-        <FileNew onFileChange={onFileChange} />
+        <FileNew onFileChange={handleFileChange} />
         <DropdownDivider />
-        <FileOpen onFileChange={onFileChange} />
+        <FileOpen onFileChange={handleFileChange} />
         <FileSave file={file} />
         <DropdownDivider />
-        <FileRename file={file} onTitleChange={(title) => onFileChange({ ...file, title })} />
+        <FileRename file={file} onTitleChange={(title) => handleFileChange({ ...file, title })} />
       </Menu>
 
       <Menu title={intl.formatMessage({ id: "edit", defaultMessage: "Edit" })}>
-        <DuplicateElement file={file} onAddElement={onAddElement} />
-        <DeleteElement file={file} onDeleteElement={onDeleteElement} />
+        <DuplicateElement file={file} onAddElement={handleAddElement} />
+        <DeleteElement file={file} onDeleteElement={handleDeleteElement} />
       </Menu>
 
       <Menu title={intl.formatMessage({ id: "view", defaultMessage: "View" })}>
-        <ToggleGrid viewOptions={viewOptions} onViewOptionsChange={onViewOptionsChange} />
+        <ToggleGrid grid={grid} onChange={handleGridChange} />
       </Menu>
 
       <Menu title={intl.formatMessage({ id: "export", defaultMessage: "Export" })}>
@@ -77,8 +81,13 @@ function AppMenu({
           </>
         }
       >
-        <LocaleItem locale="de" name="Deutsch" onLocaleChange={onLocaleChange} />
-        <LocaleItem locale="en" name="English" onLocaleChange={onLocaleChange} country="uk" />
+        <LocaleItem locale={Locale.GERMAN} name="Deutsch" onChange={handleLocaleChange} />
+        <LocaleItem
+          locale={Locale.ENGLISH}
+          name="English"
+          onChange={handleLocaleChange}
+          country="uk"
+        />
       </Menu>
     </MenuBar>
   );

@@ -1,19 +1,20 @@
 import { Dispatch } from "react";
 import { useIntl } from "react-intl";
+import { Locale } from "../../utils";
 import { DropdownItem, Flag } from "../blocks";
 
 interface Props {
-  locale: string;
+  locale: Locale;
   name: string;
   country?: string;
-  onLocaleChange: Dispatch<string>;
+  onChange: Dispatch<Locale>;
 }
 
-function LocaleItem({ locale, name, country = locale, onLocaleChange }: Props) {
+function LocaleItem({ locale, name, country = locale, onChange }: Props) {
   const intl = useIntl();
 
   return (
-    <DropdownItem active={intl.locale === locale} onClick={() => onLocaleChange(locale)}>
+    <DropdownItem active={intl.locale === locale} onClick={() => onChange(locale)}>
       <Flag country={country} /> {name}
     </DropdownItem>
   );

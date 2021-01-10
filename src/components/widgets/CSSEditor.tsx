@@ -1,14 +1,12 @@
+import { useStore } from "../../modules";
 import { Editor } from "../blocks";
 
-interface Props {
-  css: string;
-  onChange?: (css: string) => void;
-}
+function CSSEditor() {
+  const { css, dispatch } = useStore("css");
 
-function CSSEditor({ css, onChange }: Props) {
   return (
     <div className="CSSEditor" style={{ gridArea: "css", position: "relative" }}>
-      <Editor language="css" value={css} onChange={onChange} />
+      <Editor language="css" value={css} onChange={(css) => dispatch("file/css", css)} />
     </div>
   );
 }

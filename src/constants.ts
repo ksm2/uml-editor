@@ -1,3 +1,5 @@
+import { Locale } from "./utils";
+
 export const GRID = 20;
 export const PADDING = 10;
 export const MARGIN = 10;
@@ -16,7 +18,7 @@ export const INITIAL_XML = `\
     <Text>visitSomething(something: Something)</Text>
   </Class>
 
-  <Implementation from="c1" to="i1" fromAnchor="n" toAnchor="s"/>
+  <Implementation from="c1" to="i1"/>
 </Diagram>
 `;
 export const INITIAL_CSS = `\
@@ -32,3 +34,4 @@ Class {
   }
 }
 `;
+export const LOCALES = [Locale.GERMAN, Locale.ENGLISH];

@@ -1,22 +1,10 @@
 import { MouseEvent, MutableRefObject, useEffect, useRef } from "react";
 import { GRID } from "../../constants";
 import { Style } from "../../css";
-import { Anchor, Classifier, Diagram, Element, Rectangle } from "../../model";
+import { Anchor, Classifier, Element, Rectangle } from "../../model";
+import { useStore } from "../../modules";
 import { CanvasRenderer, Handle } from "../../renderer";
-import {
-  Coordinates,
-  getMouseCoordinates,
-  roundCoordsBy,
-  subtractCoords,
-  ViewOptions,
-} from "../../utils";
-
-interface Props {
-  viewOptions: ViewOptions;
-  diagram: Diagram;
-  style: Style;
-  onChange?: (element: Element) => void;
-}
+import { Coordinates, getMouseCoordinates, roundCoordsBy, subtractCoords } from "../../utils";
 
 function createRenderer(canvas: HTMLCanvasElement, style: Style): CanvasRenderer {
   return new CanvasRenderer(canvas, style, {
@@ -25,8 +13,8 @@ function createRenderer(canvas: HTMLCanvasElement, style: Style): CanvasRenderer
   });
 }
 
-function Canvas({ viewOptions, diagram, style, onChange }: Props) {
-  const options = useRef(viewOptions);
+function Canvas() {
+  const { grid, model, style, dispatch } = useStore("model", "style", "grid");
   const div = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const mouseDownCoords = useRef<Coordinates>(null) as MutableRefObject<Coordinates | null>;
@@ -34,10 +22,6 @@ function Canvas({ viewOptions, diagram, style, onChange }: Props) {
   const mouseDownObject = useRef<Handle | Element>(null) as MutableRefObject<
     Handle | Element | null
   >;
-
-  useEffect(() => {
-    options.current = viewOptions;
-  });
 
   useEffect(() => {
     function onResize() {
@@ -51,10 +35,10 @@ function Canvas({ viewOptions, diagram, style, onChange }: Props) {
 
       const renderer = createRenderer(canvas.current!, style);
       renderer.clear();
-      if (options.current.grid) {
+      if (grid) {
         renderer.renderGrid();
       }
-      renderer.renderDiagram(diagram);
+      renderer.renderDiagram(model);
     }
 
     window.addEventListener("resize", onResize);
@@ -62,7 +46,7 @@ function Canvas({ viewOptions, diagram, style, onChange }: Props) {
     return () => {
       window.removeEventListener("resize", onResize);
     };
-  }, [viewOptions, diagram, style]);
+  });
 
   function setCursor(cursor: string): void {
     canvas.current!.style.cursor = cursor;
@@ -72,27 +56,27 @@ function Canvas({ viewOptions, diagram, style, onChange }: Props) {
     if (handle.anchor === Anchor.W || handle.anchor === Anchor.NW || handle.anchor === Anchor.SW) {
       target.setWidth(mouseDownRectangle.current!.width - deltaX);
       target.setLeft(mouseDownRectangle.current!.x + deltaX);
-      onChange?.(target);
+      dispatch("file/model", target);
     }
     if (handle.anchor === Anchor.E || handle.anchor === Anchor.NE || handle.anchor === Anchor.SE) {
       target.setWidth(mouseDownRectangle.current!.width + deltaX);
       target.setLeft(mouseDownRectangle.current!.x);
-      onChange?.(target);
+      dispatch("file/model", target);
     }
     if (handle.anchor === Anchor.N || handle.anchor === Anchor.NW || handle.anchor === Anchor.NE) {
       target.setHeight(mouseDownRectangle.current!.height - deltaY);
       target.setTop(mouseDownRectangle.current!.y + deltaY);
-      onChange?.(target);
+      dispatch("file/model", target);
     }
     if (handle.anchor === Anchor.S || handle.anchor === Anchor.SW || handle.anchor === Anchor.SE) {
       target.setHeight(mouseDownRectangle.current!.height + deltaY);
       target.setTop(mouseDownRectangle.current!.y);
-      onChange?.(target);
+      dispatch("file/model", target);
     }
   }
 
   function handleLeftMouseButtonMove(x: number, y: number) {
-    const target = diagram.find((el) => el.isSelected());
+    const target = model.find((el) => el.isSelected());
     if (target instanceof Classifier) {
       const { x: deltaX, y: deltaY } = roundCoordsBy(
         subtractCoords({ x, y }, mouseDownCoords.current!),
@@ -101,7 +85,7 @@ function Canvas({ viewOptions, diagram, style, onChange }: Props) {
       if (mouseDownObject.current === target) {
         target.setLeft(mouseDownRectangle.current!.x + deltaX);
         target.setTop(mouseDownRectangle.current!.y + deltaY);
-        onChange?.(target);
+        dispatch("file/model", target);
         return;
       }
       if (mouseDownObject.current instanceof Handle) {
@@ -117,24 +101,24 @@ function Canvas({ viewOptions, diagram, style, onChange }: Props) {
     if (event.buttons & 1) {
       handleLeftMouseButtonMove(x, y);
       renderer.clear();
-      if (options.current.grid) {
+      if (grid) {
         renderer.renderGrid();
       }
-      renderer.renderDiagram(diagram);
+      renderer.renderDiagram(model);
       return;
     }
 
-    for (const element of diagram) {
+    for (const element of model) {
       element.setHovered(false);
     }
 
-    const handle = renderer.findHandleForPoint(diagram, x, y);
+    const handle = renderer.findHandleForPoint(model, x, y);
     if (handle !== undefined) {
       setCursor(`${Anchor[handle.anchor].toLowerCase()}-resize`);
     } else {
       setCursor("default");
 
-      for (const classifier of diagram) {
+      for (const classifier of model) {
         if (classifier instanceof Classifier) {
           const isInClassifier = renderer.isPointInClassifier(classifier, x, y);
           if (isInClassifier) {
@@ -146,15 +130,15 @@ function Canvas({ viewOptions, diagram, style, onChange }: Props) {
     }
 
     renderer.clear();
-    if (options.current.grid) {
+    if (grid) {
       renderer.renderGrid();
     }
-    renderer.renderDiagram(diagram);
+    renderer.renderDiagram(model);
   }
 
   function renderMouseDown(renderer: CanvasRenderer, x: number, y: number) {
-    const selectedElement = diagram.find((el) => el.isSelected());
-    const handle = renderer.findHandleForPoint(diagram, x, y);
+    const selectedElement = model.find((el) => el.isSelected());
+    const handle = renderer.findHandleForPoint(model, x, y);
     if (handle !== undefined && selectedElement instanceof Classifier) {
       mouseDownRectangle.current = selectedElement.getRectangle();
       mouseDownCoords.current = { x, y };
@@ -163,7 +147,7 @@ function Canvas({ viewOptions, diagram, style, onChange }: Props) {
     }
 
     selectedElement?.setSelected(false);
-    for (const classifier of diagram) {
+    for (const classifier of model) {
       if (classifier instanceof Classifier) {
         const isInClassifier = renderer.isPointInClassifier(classifier, x, y);
         if (isInClassifier) {
@@ -183,10 +167,10 @@ function Canvas({ viewOptions, diagram, style, onChange }: Props) {
 
     renderMouseDown(renderer, x, y);
     renderer.clear();
-    if (options.current.grid) {
+    if (grid) {
       renderer.renderGrid();
     }
-    renderer.renderDiagram(diagram);
+    renderer.renderDiagram(model);
   }
 
   function handleMouseUp() {
@@ -199,10 +183,7 @@ function Canvas({ viewOptions, diagram, style, onChange }: Props) {
     <div
       ref={div}
       className="Canvas"
-      style={{
-        backgroundColor: "hsl(220 9% 92% / 1)",
-        gridArea: "canvas",
-      }}
+      style={{ backgroundColor: "hsl(220 9% 92% / 1)", gridArea: "canvas" }}
     >
       <canvas
         ref={canvas}

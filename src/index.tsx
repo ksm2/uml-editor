@@ -4,11 +4,16 @@ import ReactDOM from "react-dom";
 import App from "./components/App";
 import { LocaleSwitch } from "./components/widgets";
 import "./index.css";
+import { Store } from "./modules";
 import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
   <React.StrictMode>
-    <LocaleSwitch>{(onLocaleChange) => <App onLocaleChange={onLocaleChange} />}</LocaleSwitch>
+    <Store>
+      <LocaleSwitch>
+        <App />
+      </LocaleSwitch>
+    </Store>
   </React.StrictMode>,
   document.getElementById("root"),
 );

@@ -1,19 +1,17 @@
 import { Dispatch } from "react";
 import { FormattedMessage } from "react-intl";
-import { ViewOptions } from "../../utils";
 import { DropdownItem, Icon } from "../blocks";
 
 interface Props {
-  viewOptions: ViewOptions;
-  onViewOptionsChange: Dispatch<ViewOptions>;
+  grid: boolean;
+  onChange: Dispatch<boolean>;
 }
 
-function ToggleGrid({ viewOptions, onViewOptionsChange }: Props) {
-  const { grid } = viewOptions;
+function ToggleGrid({ grid, onChange }: Props) {
   const icon = grid ? "grid-3x3-gap-fill" : "grid-3x3-gap";
 
   function handleClick() {
-    onViewOptionsChange({ ...viewOptions, grid: !grid });
+    onChange(!grid);
   }
 
   return (

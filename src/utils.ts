@@ -7,10 +7,6 @@ export interface Coordinates {
   readonly y: number;
 }
 
-export interface Consumer<T> {
-  (item: T): void;
-}
-
 export interface Predicate<T> {
   (item: T): boolean;
 }
@@ -26,8 +22,9 @@ export interface File extends SerializableFile {
   style: Style;
 }
 
-export interface ViewOptions {
-  grid: boolean;
+export enum Locale {
+  GERMAN = "de",
+  ENGLISH = "en",
 }
 
 export function getMouseCoordinates(event: MouseEvent<HTMLCanvasElement>): Coordinates {
