@@ -1,6 +1,6 @@
 import { StoreonStore } from "storeon";
 import { LOCALES } from "../constants";
-import { Locale } from "../utils";
+import { Locale, storageAvailable } from "../utils";
 
 export interface LocaleState {
   locale: Locale;
@@ -19,8 +19,32 @@ function normalizeLocale(locale: string): Locale {
   }
 }
 
-export function locale(store: StoreonStore<LocaleState, LocaleEvents>): void {
-  store.on("@init", () => ({ locale: normalizeLocale(navigator.language) }));
+function loadLocale(): string {
+  if (storageAvailable()) {
+    const storedLocale = localStorage.getItem("locale");
+    if (storedLocale !== null) {
+      return storedLocale;
+    }
+  }
 
-  store.on("locale/change", (state, locale) => ({ ...state, locale }));
+  if (typeof navigator.language === "string") {
+    return navigator.language;
+  }
+
+  return Locale.ENGLISH;
+}
+
+function storeLocale(locale: string): void {
+  if (storageAvailable()) {
+    localStorage.setItem("locale", locale);
+  }
+}
+
+export function locale(store: StoreonStore<LocaleState, LocaleEvents>): void {
+  store.on("@init", () => ({ locale: normalizeLocale(loadLocale()) }));
+
+  store.on("locale/change", (state, locale) => {
+    storeLocale(locale);
+    return { ...state, locale };
+  });
 }
