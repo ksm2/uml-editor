@@ -41,7 +41,11 @@ function Canvas({ viewOptions, diagram, style, onChange }: Props) {
 
   useEffect(() => {
     function onResize() {
-      const rect = div.current!.getBoundingClientRect();
+      if (div.current === null) {
+        return;
+      }
+
+      const rect = div.current.getBoundingClientRect();
       canvas.current!.width = Math.trunc(rect.width);
       canvas.current!.height = Math.trunc(rect.height);
 
