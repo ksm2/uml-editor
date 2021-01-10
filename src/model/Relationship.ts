@@ -1,4 +1,3 @@
-import { qcos, qsin } from "../renderer/anchors";
 import AbstractElement from "./AbstractElement";
 import Anchor from "./Anchor";
 import Classifier from "./Classifier";
@@ -21,26 +20,6 @@ class Relationship extends AbstractElement {
     this.fromAnchor = fromAnchor;
     this.to = to;
     this.toAnchor = toAnchor;
-  }
-
-  getX1(): number {
-    return this.from.getLeft() + qsin(this.fromAnchor) * this.from.getWidth();
-  }
-
-  getY1(): number {
-    return this.from.getTop() + qcos(this.fromAnchor) * this.from.getHeight();
-  }
-
-  getX2(): number {
-    return this.to.getLeft() + qsin(this.toAnchor) * this.to.getWidth();
-  }
-
-  getY2(): number {
-    return this.to.getTop() + qcos(this.toAnchor) * this.to.getHeight();
-  }
-
-  getAngle(): number {
-    return Math.atan2(this.getY2() - this.getY1(), this.getX2() - this.getX1());
   }
 
   render(renderer: Renderer): void {

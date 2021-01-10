@@ -1,14 +1,15 @@
-import { Classifier, Renderer } from "../model";
+import { Relationship, Renderer } from "../model";
 
 function bresenhamAlgorithm(
   canvas: Renderer,
-  cl1: Classifier,
-  cl2: Classifier,
-): [number, number, number, number] | undefined {
-  const x1 = cl1.getX();
-  const y1 = cl1.getY();
-  const x2 = cl2.getX();
-  const y2 = cl2.getY();
+  relationship: Relationship,
+): [number, number, number, number] {
+  const cl1 = relationship.from;
+  const cl2 = relationship.to;
+  const x1 = cl1.getAnchorX(relationship.fromAnchor);
+  const y1 = cl1.getAnchorY(relationship.fromAnchor);
+  const x2 = cl2.getAnchorX(relationship.toAnchor);
+  const y2 = cl2.getAnchorY(relationship.toAnchor);
 
   // Calculate distances
   const dx = Math.abs(x2 - x1);
@@ -54,7 +55,7 @@ function bresenhamAlgorithm(
   }
 
   if (lx1 === undefined || ly1 === undefined || lx2 === undefined || ly2 === undefined) {
-    return undefined;
+    return [x1, y1, x2, y2];
   }
 
   return [lx1, ly1, lx2, ly2];

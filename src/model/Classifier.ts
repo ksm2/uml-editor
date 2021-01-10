@@ -51,6 +51,14 @@ class Classifier extends AbstractElement {
     return this.y;
   }
 
+  getAnchorX(anchor: Anchor): number {
+    return this.getLeft() + qsin(anchor) * this.width;
+  }
+
+  getAnchorY(anchor: Anchor): number {
+    return this.getTop() + qcos(anchor) * this.height;
+  }
+
   getHeight(): number {
     return this.height;
   }

@@ -13,22 +13,17 @@ class CanvasRelationshipRenderer implements RelationshipRenderer {
   }
 
   renderRelationship(relationship: Relationship): void {
-    const line = bresenhamAlgorithm(this.renderer, relationship.from, relationship.to);
+    const [x1, y1, x2, y2] = bresenhamAlgorithm(this.renderer, relationship);
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+
     this.canvas.save();
     this.canvas.beginPath();
-    const [x1, y1, x2, y2] = line ?? [
-      relationship.getX1(),
-      relationship.getY1(),
-      relationship.getX2(),
-      relationship.getY2(),
-    ];
-
     this.canvas.moveTo(x1, y1);
     this.canvas.lineTo(x2, y2);
     this.applyRelationshipStyle(relationship);
     this.canvas.stroke();
-    this.drawFromTip(relationship, x1, y1);
-    this.drawToTip(relationship, x2, y2);
+    this.drawFromTip(relationship, angle, x1, y1);
+    this.drawToTip(relationship, angle, x2, y2);
     this.canvas.restore();
   }
 
@@ -55,29 +50,26 @@ class CanvasRelationshipRenderer implements RelationshipRenderer {
     }
   }
 
-  private drawFromTip(relationship: Relationship, x: number, y: number): void {
-    if (relationship.fromTip !== Tip.NONE) {
+  private drawFromTip(relationship: Relationship, angle: number, x: number, y: number): void {
+    this.drawTip(relationship.fromTip, x, y, angle + Math.PI);
+  }
+
+  private drawToTip(relationship: Relationship, angle: number, x: number, y: number): void {
+    this.drawTip(relationship.toTip, x, y, angle);
+  }
+
+  private drawTip(tip: Tip, x: number, y: number, angle: number) {
+    if (tip !== Tip.NONE) {
       this.canvas.setLineDash([]);
       this.canvas.save();
       this.canvas.translate(x, y);
-      this.canvas.rotate(relationship.getAngle() + Math.PI);
-      this.drawTip(relationship.fromTip);
+      this.canvas.rotate(angle);
+      this.drawTipPath(tip);
       this.canvas.restore();
     }
   }
 
-  private drawToTip(relationship: Relationship, x: number, y: number): void {
-    if (relationship.toTip !== Tip.NONE) {
-      this.canvas.setLineDash([]);
-      this.canvas.save();
-      this.canvas.translate(x, y);
-      this.canvas.rotate(relationship.getAngle());
-      this.drawTip(relationship.toTip);
-      this.canvas.restore();
-    }
-  }
-
-  private drawTip(tip: Tip): void {
+  private drawTipPath(tip: Tip): void {
     switch (tip) {
       case Tip.ARROW:
         this.drawArrow();
