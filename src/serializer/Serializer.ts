@@ -205,11 +205,11 @@ class Serializer {
   }
 
   private parseAnchorAttribute(element: Element, attribute: string): Model.Anchor {
-    return this.parseEnumAttribute(Model.Anchor, element, attribute, Model.Anchor.S);
+    return this.parseEnumAttribute(Model.Anchor, element, attribute, Model.Anchor.CENTER);
   }
 
   private setAnchorAttribute(element: Element, attribute: string, anchor: Model.Anchor) {
-    this.setEnumAttribute(Model.Anchor, element, attribute, anchor);
+    this.setEnumAttribute(Model.Anchor, element, attribute, anchor, Model.Anchor.CENTER);
   }
 
   private parseTipAttribute(element: Element, attribute: string, fallback: Model.Tip): Model.Tip {
@@ -246,9 +246,14 @@ class Serializer {
     element: Element,
     attribute: string,
     enumValue: number,
+    fallback: number,
   ): void {
-    const value = enumClass[enumValue].toLowerCase();
-    element.setAttribute(attribute, value);
+    if (enumValue === fallback) {
+      element.removeAttribute(attribute);
+    } else {
+      const value = enumClass[enumValue].toLowerCase();
+      element.setAttribute(attribute, value);
+    }
   }
 
   private parseIntAttribute(element: Element, attribute: string, fallback: number): number {

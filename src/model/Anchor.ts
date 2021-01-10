@@ -15,6 +15,7 @@ enum Anchor {
   WNW,
   NW,
   NNW,
+  CENTER,
 }
 
 export default Anchor;

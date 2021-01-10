@@ -19,6 +19,7 @@ describe("anchors", () => {
     expect(qsin(Anchor.WNW)).toBe(0);
     expect(qsin(Anchor.NW)).toBe(0);
     expect(qsin(Anchor.NNW)).toBe(0.25);
+    expect(qsin(Anchor.CENTER)).toBe(0.5);
   });
 
   it("qcos", () => {
@@ -38,5 +39,6 @@ describe("anchors", () => {
     expect(qcos(Anchor.WNW)).toBe(0.25);
     expect(qcos(Anchor.NW)).toBe(0);
     expect(qcos(Anchor.NNW)).toBe(0);
+    expect(qcos(Anchor.CENTER)).toBe(0.5);
   });
 });

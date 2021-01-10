@@ -13,6 +13,10 @@ function isSide(side: number, anchor: Anchor): boolean {
 }
 
 export function qsin(anchor: Anchor): number {
+  if (anchor === Anchor.CENTER) {
+    return 1 / 2;
+  }
+
   if (isSide(SOUTH, anchor)) {
     return 0;
   }
@@ -37,6 +41,10 @@ export function qsin(anchor: Anchor): number {
 }
 
 export function qcos(anchor: Anchor): number {
+  if (anchor === Anchor.CENTER) {
+    return 1 / 2;
+  }
+
   if (isSide(EAST, anchor)) {
     return 0;
   }
