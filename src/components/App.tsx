@@ -15,16 +15,17 @@ interface Props {
 
 function App({ onLocaleChange }: Props) {
   const intl = useIntl();
+  const untitledMsg = intl.formatMessage({ id: "untitled", defaultMessage: "Untitled" });
+  const titleMsg = intl.formatMessage({ id: "title", defaultMessage: "UML Editor" });
+
   const [viewOptions, setViewOptions] = useState<ViewOptions>({ grid: false });
   const [diagram, setDiagram] = useState(() => new Diagram());
   const [style, setStyle] = useState(() => new Style());
-  const [title, setTitle] = useState("Untitled");
+  const [title, setTitle] = useState(untitledMsg);
   const [xml, setXml] = useState("");
   const [css, setCss] = useState("");
 
-  useDocumentTitle(
-    `${title} - ${intl.formatMessage({ id: "title", defaultMessage: "UML Editor" })}`,
-  );
+  useDocumentTitle(`${title} - ${titleMsg}`);
 
   function forceRerender(): void {
     setViewOptions({ ...viewOptions });
