@@ -1,11 +1,23 @@
 import { Anchor } from "../model";
 
+const EAST = 2;
+const SOUTH = 6;
+const WEST = 10;
+const NORTH = 14;
+
+const NUM_SIDE = 5;
+const NUM_OUTER = 16;
+
+function isSide(side: number, anchor: Anchor): boolean {
+  return (anchor + side) % NUM_OUTER < NUM_SIDE;
+}
+
 export function qsin(anchor: Anchor): number {
-  if ((anchor + 6) % 16 < 5) {
+  if (isSide(SOUTH, anchor)) {
     return 0;
   }
 
-  if ((anchor + 14) % 16 < 5) {
+  if (isSide(NORTH, anchor)) {
     return 1;
   }
 
@@ -25,11 +37,11 @@ export function qsin(anchor: Anchor): number {
 }
 
 export function qcos(anchor: Anchor): number {
-  if ((anchor + 2) % 16 < 5) {
+  if (isSide(EAST, anchor)) {
     return 0;
   }
 
-  if ((anchor + 10) % 16 < 5) {
+  if (isSide(WEST, anchor)) {
     return 1;
   }
 
