@@ -12,11 +12,12 @@ function createRenderer(canvas: HTMLCanvasElement, style: Style, view: ViewState
     grid: view.grid,
     translateX: view.positionX + canvas.width / 2,
     translateY: view.positionY + canvas.height / 2,
+    zoom: view.zoom,
   });
 }
 
 function Canvas() {
-  const view = useStore("grid", "positionX", "positionY");
+  const view = useStore("grid", "positionX", "positionY", "zoom");
   const { model, style, dispatch } = useStore("model", "style");
   const div = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);

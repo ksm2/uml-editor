@@ -33,6 +33,10 @@ function matchesShortcut(shortcut: string, event: KeyboardEvent) {
       result = result && event.shiftKey;
     } else if (element === "Alt") {
       result = result && event.altKey;
+    } else if (element === "Plus") {
+      result = result && (event.key === "=" || event.key === "+");
+    } else if (element === "Minus") {
+      result = result && event.key === "-";
     } else {
       result = result && event.key.toLowerCase() === element.toLowerCase();
     }

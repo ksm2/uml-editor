@@ -14,6 +14,8 @@ function Shortcut({ shortcut }: Props) {
     ["ArrowDown", intl.formatMessage({ id: "shortcut.arrowDown", defaultMessage: "Down" })],
     ["Ctrl", intl.formatMessage({ id: "shortcut.ctrl", defaultMessage: "Ctrl" })],
     ["Delete", intl.formatMessage({ id: "shortcut.delete", defaultMessage: "Delete" })],
+    ["Minus", intl.formatMessage({ id: "shortcut.minus", defaultMessage: "Minus" })],
+    ["Plus", intl.formatMessage({ id: "shortcut.plus", defaultMessage: "Plus" })],
     ["Shift", intl.formatMessage({ id: "shortcut.shift", defaultMessage: "Shift" })],
   ]);
 

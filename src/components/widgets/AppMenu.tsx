@@ -17,6 +17,9 @@ import MoveUp from "./MoveUp";
 import PNGExport from "./PNGExport";
 import SVGExport from "./SVGExport";
 import ToggleGrid from "./ToggleGrid";
+import ZoomIn from "./ZoomIn";
+import ZoomOut from "./ZoomOut";
+import ZoomReset from "./ZoomReset";
 
 function AppMenu() {
   const file = useStore("title", "xml", "css", "model", "style");
@@ -64,6 +67,10 @@ function AppMenu() {
         <MoveRight onMove={() => dispatch("view/moveRight")} />
         <MoveUp onMove={() => dispatch("view/moveUp")} />
         <MoveDown onMove={() => dispatch("view/moveDown")} />
+        <DropdownDivider />
+        <ZoomReset onZoom={() => dispatch("view/zoomReset")} />
+        <ZoomIn onZoom={() => dispatch("view/zoomIn")} />
+        <ZoomOut onZoom={() => dispatch("view/zoomOut")} />
         <DropdownDivider />
         <ToggleGrid grid={grid} onChange={handleGridChange} />
       </Menu>

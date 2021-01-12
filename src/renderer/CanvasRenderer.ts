@@ -26,12 +26,14 @@ class CanvasRenderer implements Renderer {
   private readonly grid: boolean;
   private readonly translateX: number;
   private readonly translateY: number;
+  private readonly zoom: number;
 
   constructor(canvas: HTMLCanvasElement, style: Style, options: CanvasOptions) {
     this.context = new RenderContext(canvas.width, canvas.height, style);
     this.grid = options.grid;
     this.translateX = options.translateX;
     this.translateY = options.translateY;
+    this.zoom = options.zoom;
     this.canvas = canvas.getContext("2d")!;
     const html5Canvas = new HTML5Canvas(this.canvas);
     this.classifierRenderer = new CanvasClassifierRenderer(this, this.context, html5Canvas);
@@ -40,8 +42,8 @@ class CanvasRenderer implements Renderer {
 
   transformPoint(x: number, y: number): { x: number; y: number } {
     return {
-      x: x - this.translateX,
-      y: y - this.translateY,
+      x: (x - this.translateX) / this.zoom,
+      y: (y - this.translateY) / this.zoom,
     };
   }
 
@@ -53,30 +55,46 @@ class CanvasRenderer implements Renderer {
   }
 
   private renderGrid(): void {
-    const minX = -Math.floor(this.translateX / GRID) * GRID;
-    const maxX = Math.floor(this.context.getWidth() - this.translateX / GRID) * GRID;
-    const minY = -Math.floor(this.translateY / GRID) * GRID;
-    const maxY = Math.floor(this.context.getHeight() - this.translateY / GRID) * GRID;
+    const left = -this.translateX;
+    const right = this.context.getWidth() - this.translateX;
+    const top = -this.translateY;
+    const bottom = this.context.getHeight() - this.translateY;
+
+    const zoomedGrid = GRID * this.zoom;
+
+    const minX = this.floorBy(left, zoomedGrid);
+    const maxX = this.ceilBy(right, zoomedGrid);
+    const minY = this.floorBy(top, zoomedGrid);
+    const maxY = this.ceilBy(bottom, zoomedGrid);
 
     this.canvas.save();
     this.canvas.translate(this.translateX, this.translateY);
     this.canvas.beginPath();
     this.canvas.strokeStyle = "#00000033";
-    for (let x = minX; x < maxX; x += GRID) {
-      this.canvas.moveTo(x, -this.translateY);
-      this.canvas.lineTo(x, this.context.getHeight() - this.translateY);
+    for (let x = minX; x < maxX; x += zoomedGrid) {
+      this.canvas.moveTo(x, top);
+      this.canvas.lineTo(x, bottom);
     }
-    for (let y = minY; y < maxY; y += GRID) {
-      this.canvas.moveTo(-this.translateX, y);
-      this.canvas.lineTo(this.context.getWidth() - this.translateX, y);
+    for (let y = minY; y < maxY; y += zoomedGrid) {
+      this.canvas.moveTo(left, y);
+      this.canvas.lineTo(right, y);
     }
     this.canvas.stroke();
     this.canvas.restore();
   }
 
+  private floorBy(number: number, by: number): number {
+    return Math.floor(number / by) * by;
+  }
+
+  private ceilBy(number: number, by: number): number {
+    return Math.ceil(number / by) * by;
+  }
+
   renderDiagram(diagram: Diagram): void {
     this.canvas.save();
     this.canvas.translate(this.translateX, this.translateY);
+    this.canvas.scale(this.zoom, this.zoom);
     for (const child of diagram.getChildren()) {
       child.render(this);
     }

@@ -18,6 +18,7 @@ function PNGExport({ file }: Props) {
       grid: false,
       translateX: MARGIN - file.model.getLeft(),
       translateY: MARGIN - file.model.getTop(),
+      zoom: 1,
     });
     renderer.renderDiagram(file.model);
 

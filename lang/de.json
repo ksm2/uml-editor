@@ -65,6 +65,12 @@
   "shortcut.delete": {
     "defaultMessage": "Entf"
   },
+  "shortcut.minus": {
+    "defaultMessage": "Minus"
+  },
+  "shortcut.plus": {
+    "defaultMessage": "Plus"
+  },
   "shortcut.shift": {
     "defaultMessage": "Umsch"
   },
@@ -91,5 +97,14 @@
   },
   "view.moveUp": {
     "defaultMessage": "Nach oben"
+  },
+  "view.zoomIn": {
+    "defaultMessage": "Größer"
+  },
+  "view.zoomOut": {
+    "defaultMessage": "Kleiner"
+  },
+  "view.zoomReset": {
+    "defaultMessage": "Zurücksetzen"
   }
 }

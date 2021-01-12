@@ -65,6 +65,12 @@
   "shortcut.delete": {
     "defaultMessage": "Delete"
   },
+  "shortcut.minus": {
+    "defaultMessage": "Minus"
+  },
+  "shortcut.plus": {
+    "defaultMessage": "Plus"
+  },
   "shortcut.shift": {
     "defaultMessage": "Shift"
   },
@@ -91,5 +97,14 @@
   },
   "view.moveUp": {
     "defaultMessage": "Move Up"
+  },
+  "view.zoomIn": {
+    "defaultMessage": "Zoom In"
+  },
+  "view.zoomOut": {
+    "defaultMessage": "Zoom Out"
+  },
+  "view.zoomReset": {
+    "defaultMessage": "Zoom Reset"
   }
 }
