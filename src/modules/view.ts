@@ -26,10 +26,18 @@ function loadView(): Partial<ViewState> {
   return {};
 }
 
-function storeView(state: ViewState): void {
+function storeView(state: ViewState): ViewState {
   if (storageAvailable()) {
-    localStorage.setItem("view", JSON.stringify(state));
+    localStorage.setItem(
+      "view",
+      JSON.stringify({
+        grid: state.grid,
+        positionX: state.positionX,
+        positionY: state.positionY,
+      }),
+    );
   }
+  return state;
 }
 
 export function view(store: StoreonStore<ViewState, ViewEvents>) {
@@ -60,20 +68,14 @@ export function view(store: StoreonStore<ViewState, ViewEvents>) {
   });
 
   store.on("view/grid", (prevState, grid) => {
-    const state: ViewState = { ...prevState, grid };
-    storeView(state);
-    return state;
+    return storeView({ ...prevState, grid });
   });
 
   store.on("view/positionX", (prevState, positionX) => {
-    const state: ViewState = { ...prevState, positionX };
-    storeView(state);
-    return state;
+    return storeView({ ...prevState, positionX });
   });
 
   store.on("view/positionY", (prevState, positionY) => {
-    const state: ViewState = { ...prevState, positionY };
-    storeView(state);
-    return state;
+    return storeView({ ...prevState, positionY });
   });
 }
