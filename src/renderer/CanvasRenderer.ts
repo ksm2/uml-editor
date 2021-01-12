@@ -23,11 +23,13 @@ class CanvasRenderer implements Renderer {
   private readonly canvas: CanvasRenderingContext2D;
   private readonly classifierRenderer: CanvasClassifierRenderer;
   private readonly relationshipRenderer: CanvasRelationshipRenderer;
+  private readonly grid: boolean;
   private readonly translateX: number;
   private readonly translateY: number;
 
   constructor(canvas: HTMLCanvasElement, style: Style, options: CanvasOptions) {
     this.context = new RenderContext(canvas.width, canvas.height, style);
+    this.grid = options.grid;
     this.translateX = options.translateX;
     this.translateY = options.translateY;
     this.canvas = canvas.getContext("2d")!;
@@ -45,9 +47,12 @@ class CanvasRenderer implements Renderer {
 
   clear(): void {
     this.canvas.clearRect(0, 0, this.context.getWidth(), this.context.getHeight());
+    if (this.grid) {
+      this.renderGrid();
+    }
   }
 
-  renderGrid(): void {
+  private renderGrid(): void {
     const minX = -Math.floor(this.translateX / GRID) * GRID;
     const maxX = Math.floor(this.context.getWidth() - this.translateX / GRID) * GRID;
     const minY = -Math.floor(this.translateY / GRID) * GRID;

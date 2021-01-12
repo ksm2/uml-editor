@@ -15,6 +15,7 @@ function PNGExport({ file }: Props) {
     canvas.height = file.model.getHeight() + 2 * MARGIN;
 
     const renderer = new CanvasRenderer(canvas, file.style, {
+      grid: false,
       translateX: MARGIN - file.model.getLeft(),
       translateY: MARGIN - file.model.getTop(),
     });

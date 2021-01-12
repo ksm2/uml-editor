@@ -6,15 +6,21 @@ import { useStore } from "../../modules";
 import { CanvasRenderer, Handle } from "../../renderer";
 import { Coordinates, getMouseCoordinates, roundCoordsBy, subtractCoords } from "../../utils";
 
-function createRenderer(canvas: HTMLCanvasElement, style: Style): CanvasRenderer {
+function createRenderer(
+  canvas: HTMLCanvasElement,
+  style: Style,
+  view: { grid: boolean },
+): CanvasRenderer {
   return new CanvasRenderer(canvas, style, {
+    grid: view.grid,
     translateX: canvas.width / 2,
     translateY: canvas.height / 2,
   });
 }
 
 function Canvas() {
-  const { grid, model, style, dispatch } = useStore("model", "style", "grid");
+  const view = useStore("grid");
+  const { model, style, dispatch } = useStore("model", "style");
   const div = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const mouseDownCoords = useRef<Coordinates>(null) as MutableRefObject<Coordinates | null>;
@@ -33,11 +39,8 @@ function Canvas() {
       canvas.current!.width = Math.trunc(rect.width);
       canvas.current!.height = Math.trunc(rect.height);
 
-      const renderer = createRenderer(canvas.current!, style);
+      const renderer = createRenderer(canvas.current!, style, view);
       renderer.clear();
-      if (grid) {
-        renderer.renderGrid();
-      }
       renderer.renderDiagram(model);
     }
 
@@ -95,15 +98,12 @@ function Canvas() {
   }
 
   function handleMouseMove(event: MouseEvent<HTMLCanvasElement>) {
-    const renderer = createRenderer(canvas.current!, style);
+    const renderer = createRenderer(canvas.current!, style, view);
     const { x, y } = getMouseCoordinates(renderer, event);
 
     if (event.buttons & 1) {
       handleLeftMouseButtonMove(x, y);
       renderer.clear();
-      if (grid) {
-        renderer.renderGrid();
-      }
       renderer.renderDiagram(model);
       return;
     }
@@ -130,9 +130,6 @@ function Canvas() {
     }
 
     renderer.clear();
-    if (grid) {
-      renderer.renderGrid();
-    }
     renderer.renderDiagram(model);
   }
 
@@ -162,14 +159,11 @@ function Canvas() {
   }
 
   function handleMouseDown(event: MouseEvent<HTMLCanvasElement>) {
-    const renderer = createRenderer(canvas.current!, style);
+    const renderer = createRenderer(canvas.current!, style, view);
     const { x, y } = getMouseCoordinates(renderer, event);
 
     renderMouseDown(renderer, x, y);
     renderer.clear();
-    if (grid) {
-      renderer.renderGrid();
-    }
     renderer.renderDiagram(model);
   }
 
