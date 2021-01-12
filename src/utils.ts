@@ -1,6 +1,7 @@
 import { MouseEvent } from "react";
 import { Style } from "./css";
 import { Diagram } from "./model";
+import { CanvasRenderer } from "./renderer";
 
 export interface Coordinates {
   readonly x: number;
@@ -27,14 +28,17 @@ export enum Locale {
   ENGLISH = "en",
 }
 
-export function getMouseCoordinates(event: MouseEvent<HTMLCanvasElement>): Coordinates {
+export function getMouseCoordinates(
+  renderer: CanvasRenderer,
+  event: MouseEvent<HTMLCanvasElement>,
+): Coordinates {
   const { clientX, clientY } = event;
   const boundingClientRect = event.currentTarget.getBoundingClientRect();
 
-  const x = clientX - boundingClientRect.x - boundingClientRect.width / 2;
-  const y = clientY - boundingClientRect.y - boundingClientRect.height / 2;
+  const x = clientX - boundingClientRect.x;
+  const y = clientY - boundingClientRect.y;
 
-  return { x, y };
+  return renderer.transformPoint(x, y);
 }
 
 export function subtractCoords(vec1: Coordinates, vec2: Coordinates): Coordinates {

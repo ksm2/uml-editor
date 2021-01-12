@@ -96,7 +96,7 @@ function Canvas() {
 
   function handleMouseMove(event: MouseEvent<HTMLCanvasElement>) {
     const renderer = createRenderer(canvas.current!, style);
-    const { x, y } = getMouseCoordinates(event);
+    const { x, y } = getMouseCoordinates(renderer, event);
 
     if (event.buttons & 1) {
       handleLeftMouseButtonMove(x, y);
@@ -163,7 +163,7 @@ function Canvas() {
 
   function handleMouseDown(event: MouseEvent<HTMLCanvasElement>) {
     const renderer = createRenderer(canvas.current!, style);
-    const { x, y } = getMouseCoordinates(event);
+    const { x, y } = getMouseCoordinates(renderer, event);
 
     renderMouseDown(renderer, x, y);
     renderer.clear();

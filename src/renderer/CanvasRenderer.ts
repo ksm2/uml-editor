@@ -36,6 +36,13 @@ class CanvasRenderer implements Renderer {
     this.relationshipRenderer = new CanvasRelationshipRenderer(this, html5Canvas);
   }
 
+  transformPoint(x: number, y: number): { x: number; y: number } {
+    return {
+      x: x - this.translateX,
+      y: y - this.translateY,
+    };
+  }
+
   clear(): void {
     this.canvas.clearRect(0, 0, this.context.getWidth(), this.context.getHeight());
   }
