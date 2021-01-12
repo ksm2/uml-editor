@@ -87,6 +87,12 @@ function Editor({ language, value, schema, onChange }: Props) {
       editor.current!.setValue(value);
     }
 
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key.includes("Arrow")) {
+        event.stopPropagation();
+      }
+    }
+
     function handleChange() {
       const newValue = editor.current!.getValue();
       if (newValue !== value) {
@@ -94,8 +100,10 @@ function Editor({ language, value, schema, onChange }: Props) {
       }
     }
 
+    editor.current!.getWrapperElement().addEventListener("keydown", handleKeyDown);
     editor.current!.on("change", handleChange);
     return () => {
+      editor.current!.getWrapperElement().removeEventListener("keydown", handleKeyDown);
       editor.current!.off("change", handleChange);
     };
   }, [value]);
