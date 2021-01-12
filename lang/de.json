@@ -47,6 +47,18 @@
   "shortcut.alt": {
     "defaultMessage": "Alt"
   },
+  "shortcut.arrowDown": {
+    "defaultMessage": "Unten"
+  },
+  "shortcut.arrowLeft": {
+    "defaultMessage": "Links"
+  },
+  "shortcut.arrowRight": {
+    "defaultMessage": "Rechts"
+  },
+  "shortcut.arrowUp": {
+    "defaultMessage": "Oben"
+  },
   "shortcut.ctrl": {
     "defaultMessage": "Strg"
   },
@@ -67,5 +79,17 @@
   },
   "view.grid": {
     "defaultMessage": "Raster umschalten"
+  },
+  "view.moveDown": {
+    "defaultMessage": "Nach unten"
+  },
+  "view.moveLeft": {
+    "defaultMessage": "Nach links"
+  },
+  "view.moveRight": {
+    "defaultMessage": "Nach rechts"
+  },
+  "view.moveUp": {
+    "defaultMessage": "Nach oben"
   }
 }

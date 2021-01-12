@@ -10,6 +10,10 @@ import FileOpen from "./FileOpen";
 import FileRename from "./FileRename";
 import FileSave from "./FileSave";
 import LocaleItem from "./LocaleItem";
+import MoveDown from "./MoveDown";
+import MoveLeft from "./MoveLeft";
+import MoveRight from "./MoveRight";
+import MoveUp from "./MoveUp";
 import PNGExport from "./PNGExport";
 import SVGExport from "./SVGExport";
 import ToggleGrid from "./ToggleGrid";
@@ -56,6 +60,11 @@ function AppMenu() {
       </Menu>
 
       <Menu title={intl.formatMessage({ id: "view", defaultMessage: "View" })}>
+        <MoveLeft onMove={() => dispatch("view/moveLeft")} />
+        <MoveRight onMove={() => dispatch("view/moveRight")} />
+        <MoveUp onMove={() => dispatch("view/moveUp")} />
+        <MoveDown onMove={() => dispatch("view/moveDown")} />
+        <DropdownDivider />
         <ToggleGrid grid={grid} onChange={handleGridChange} />
       </Menu>
 

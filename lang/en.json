@@ -47,6 +47,18 @@
   "shortcut.alt": {
     "defaultMessage": "Alt"
   },
+  "shortcut.arrowDown": {
+    "defaultMessage": "Down"
+  },
+  "shortcut.arrowLeft": {
+    "defaultMessage": "Left"
+  },
+  "shortcut.arrowRight": {
+    "defaultMessage": "Right"
+  },
+  "shortcut.arrowUp": {
+    "defaultMessage": "Up"
+  },
   "shortcut.ctrl": {
     "defaultMessage": "Ctrl"
   },
@@ -67,5 +79,17 @@
   },
   "view.grid": {
     "defaultMessage": "Toggle Grid"
+  },
+  "view.moveDown": {
+    "defaultMessage": "Move Down"
+  },
+  "view.moveLeft": {
+    "defaultMessage": "Move Left"
+  },
+  "view.moveRight": {
+    "defaultMessage": "Move Right"
+  },
+  "view.moveUp": {
+    "defaultMessage": "Move Up"
   }
 }

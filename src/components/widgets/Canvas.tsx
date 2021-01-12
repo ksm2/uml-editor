@@ -3,23 +3,20 @@ import { GRID } from "../../constants";
 import { Style } from "../../css";
 import { Anchor, Classifier, Element, Rectangle } from "../../model";
 import { useStore } from "../../modules";
+import { ViewState } from "../../modules/view";
 import { CanvasRenderer, Handle } from "../../renderer";
 import { Coordinates, getMouseCoordinates, roundCoordsBy, subtractCoords } from "../../utils";
 
-function createRenderer(
-  canvas: HTMLCanvasElement,
-  style: Style,
-  view: { grid: boolean },
-): CanvasRenderer {
+function createRenderer(canvas: HTMLCanvasElement, style: Style, view: ViewState): CanvasRenderer {
   return new CanvasRenderer(canvas, style, {
     grid: view.grid,
-    translateX: canvas.width / 2,
-    translateY: canvas.height / 2,
+    translateX: view.positionX + canvas.width / 2,
+    translateY: view.positionY + canvas.height / 2,
   });
 }
 
 function Canvas() {
-  const view = useStore("grid");
+  const view = useStore("grid", "positionX", "positionY");
   const { model, style, dispatch } = useStore("model", "style");
   const div = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
