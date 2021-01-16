@@ -31,6 +31,15 @@ class ShapeRenderer {
       case Shape.COMPONENT:
         this.drawComponentShape(rectangle);
         return;
+      case Shape.DIAMOND:
+        this.drawDiamondShape(rectangle);
+        return;
+      case Shape.TRAPEZE:
+        this.drawTrapezeShape(rectangle);
+        return;
+      case Shape.HEXAGONAL:
+        this.drawHexagonalShape(rectangle);
+        return;
     }
   }
 
@@ -129,6 +138,43 @@ class ShapeRenderer {
       COMPONENT_WIDTH,
       COMPONENT_HEIGHT,
     );
+  }
+
+  private drawDiamondShape(rectangle: Rectangle) {
+    const { x, y, width, height } = rectangle;
+    const middleX = x + width / 2;
+    const middleY = y + height / 2;
+    this.canvas.moveTo(middleX, y);
+    this.canvas.lineTo(x + width, middleY);
+    this.canvas.lineTo(middleX, y + height);
+    this.canvas.lineTo(x, middleY);
+    this.canvas.closePath();
+  }
+
+  private drawTrapezeShape(rectangle: Rectangle) {
+    const { x, y, width, height } = rectangle;
+    const x1 = x + width / 6;
+    const x2 = x + (5 * width) / 6;
+    const x3 = x + width;
+    this.canvas.moveTo(x1, y);
+    this.canvas.lineTo(x3, y);
+    this.canvas.lineTo(x2, y + height);
+    this.canvas.lineTo(x, y + height);
+    this.canvas.closePath();
+  }
+
+  private drawHexagonalShape(rectangle: Rectangle) {
+    const { x, y, width, height } = rectangle;
+    const middleX = x + width / 2;
+    const y1 = y + height / 4;
+    const y2 = y + (3 * height) / 4;
+    this.canvas.moveTo(middleX, y);
+    this.canvas.lineTo(x + width, y1);
+    this.canvas.lineTo(x + width, y2);
+    this.canvas.lineTo(middleX, y + height);
+    this.canvas.lineTo(x, y2);
+    this.canvas.lineTo(x, y1);
+    this.canvas.closePath();
   }
 }
 

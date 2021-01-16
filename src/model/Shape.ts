@@ -6,6 +6,9 @@ enum Shape {
   BOX,
   FILE,
   COMPONENT,
+  DIAMOND,
+  TRAPEZE,
+  HEXAGONAL,
 }
 
 export default Shape;
