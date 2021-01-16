@@ -300,8 +300,10 @@ class Serializer {
 
   private createElement(parent: Element, element: Model.Element): Element {
     const newElement = parent.ownerDocument.createElement(element.getTagName());
-    const id = this.generateId(parent.ownerDocument, element);
-    newElement.setAttribute("id", id);
+    if (element instanceof Model.Classifier) {
+      const id = this.generateId(parent.ownerDocument, element);
+      newElement.setAttribute("id", id);
+    }
     this.elementMap.set(newElement, element);
 
     parent.appendChild(newElement);
