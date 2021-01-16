@@ -113,6 +113,7 @@ class Serializer {
     this.setIntAttribute(element, "y", 0, classifier.getY());
     this.setIntAttribute(element, "width", 200, classifier.getWidth());
     this.setIntAttribute(element, "height", 120, classifier.getHeight());
+    this.setEnumAttribute(Model.Shape, element, "shape", classifier.shape);
     this.updateChildren(element, classifier);
   }
 
@@ -246,7 +247,7 @@ class Serializer {
     element: Element,
     attribute: string,
     enumValue: number,
-    fallback: number,
+    fallback?: number,
   ): void {
     if (enumValue === fallback) {
       element.removeAttribute(attribute);

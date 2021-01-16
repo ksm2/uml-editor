@@ -105,7 +105,9 @@ class Classifier extends AbstractElement {
 
   clone(): Classifier {
     const { constructor } = Object.getPrototypeOf(this);
-    return new constructor(this.anchor, this.x + 20, this.y + 20, this.width, this.height);
+    const clone = new constructor(this.anchor, this.x + 20, this.y + 20, this.width, this.height);
+    clone.shape = this.shape;
+    return clone;
   }
 }
 
